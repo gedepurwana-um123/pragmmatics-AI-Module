@@ -7,15 +7,11 @@ import { base44 } from '@/api/base44Client';
 export default function LoginModal({ isOpen, onClose }) {
   const [selected, setSelected] = useState(null); // 'mahasiswa' | 'dosen'
 
-  const handleLogin = () => {
-    if (!selected) return;
-    sessionStorage.setItem('login_role_intent', selected);
-    // Let Base44 SDK handle OAuth redirect without custom URL
-    // (custom redirect URLs cause Google 403 if not registered)
-    base44.auth.redirectToLogin();
-  };
-
-  const handleDirectLogin = () => {
+  const handleLogin = (role) => {
+    const chosenRole = role || selected;
+    if (chosenRole) {
+      sessionStorage.setItem('login_role_intent', chosenRole);
+    }
     base44.auth.redirectToLogin();
   };
 
@@ -117,7 +113,7 @@ export default function LoginModal({ isOpen, onClose }) {
 
           {/* Login button */}
           <Button
-            onClick={handleLogin}
+            onClick={() => handleLogin()}
             disabled={!selected}
             className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white disabled:opacity-40 transition-all"
           >
@@ -138,7 +134,7 @@ export default function LoginModal({ isOpen, onClose }) {
           </p>
 
           <div className="mt-3 pt-3 border-t border-border">
-            <button onClick={handleDirectLogin}
+            <button onClick={() => handleLogin(null)}
               className="w-full text-xs text-muted-foreground hover:text-primary transition-colors py-1"
             >
               Atau masuk langsung tanpa memilih peran →

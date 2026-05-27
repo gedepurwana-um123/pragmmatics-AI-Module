@@ -37,7 +37,8 @@ const RoleRedirect = () => {
   const { isAuthenticated, isLoadingAuth } = useAuth();
 
   useEffect(() => {
-    if (!isLoadingAuth && isAuthenticated) {
+    if (isLoadingAuth) return;
+    if (isAuthenticated) {
       const intent = sessionStorage.getItem('login_role_intent');
       sessionStorage.removeItem('login_role_intent');
       if (intent === 'dosen') {
@@ -45,33 +46,38 @@ const RoleRedirect = () => {
       } else {
         navigate('/dashboard', { replace: true });
       }
+    } else {
+      // Not authenticated after redirect — go back to landing
+      navigate('/', { replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
-  return null;
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <p className="text-sm text-muted-foreground">Mengalihkan...</p>
+      </div>
+    </div>
+  );
 };
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, authError } = useAuth();
 
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-          <p className="text-sm text-muted-foreground font-space">Memuat PragmaticsAI...</p>
+          <div className="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          <p className="text-sm text-muted-foreground">Memuat PragmaticsAI...</p>
         </div>
       </div>
     );
   }
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
-    }
+  if (authError?.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
   }
 
   return (
