@@ -1,0 +1,54 @@
+{
+  "name": "LearningProgress",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email mahasiswa"
+    },
+    "module_id": {
+      "type": "string",
+      "description": "ID modul"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "belum_mulai",
+        "sedang_berjalan",
+        "selesai"
+      ],
+      "default": "belum_mulai"
+    },
+    "score": {
+      "type": "number",
+      "description": "Skor 0-100"
+    },
+    "pragmatic_competence": {
+      "type": "number",
+      "description": "Skor kompetensi pragmatik 0-100"
+    },
+    "politeness_score": {
+      "type": "number",
+      "description": "Skor kesantunan 0-100"
+    },
+    "toxicity_reduction": {
+      "type": "number",
+      "description": "Penurunan toxicity 0-100"
+    },
+    "ai_interaction_count": {
+      "type": "number",
+      "description": "Jumlah interaksi AI"
+    },
+    "reflection_count": {
+      "type": "number",
+      "description": "Jumlah refleksi"
+    },
+    "time_spent_minutes": {
+      "type": "number",
+      "description": "Waktu belajar dalam menit"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

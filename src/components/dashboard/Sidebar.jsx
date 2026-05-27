@@ -1,0 +1,139 @@
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard, BookOpen, Bot, MessageSquare, BarChart3,
+  FlaskConical, PenLine, TrendingUp, Award, Settings,
+  ChevronLeft, Brain, Users, Menu, X, Library
+} from 'lucide-react';
+
+const menuItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: BookOpen, label: 'Modul Saya', path: '/modules' },
+  { icon: Bot, label: 'Asisten AI', path: '/ai-analyzer' },
+  { icon: FlaskConical, label: 'Lab Media Sosial', path: '/social-lab' },
+  { icon: BarChart3, label: 'Analisis Pragmatik', path: '/ai-analyzer' },
+  { icon: MessageSquare, label: 'Simulasi Interaksi', path: '/social-lab' },
+  { icon: PenLine, label: 'Jurnal Reflektif', path: '/journal' },
+  { icon: TrendingUp, label: 'Analitik', path: '/analytics' },
+  { icon: Library, label: 'Perpustakaan Kasus', path: '/ethnography' },
+  { icon: Award, label: 'Pencapaian', path: '/achievements' },
+  { icon: Settings, label: 'Pengaturan', path: '/settings' },
+];
+
+export default function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="flex items-center justify-between p-4 border-b border-border/20">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+            <Brain className="w-4 h-4 text-white" />
+          </div>
+          {!collapsed && <span className="font-bold font-space text-sm">PragmaticsAI</span>}
+        </Link>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex w-7 h-7 rounded-lg hover:bg-secondary items-center justify-center text-muted-foreground"
+        >
+          <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
+        </button>
+      </div>
+
+      {/* Menu */}
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Link
+              key={item.path + item.label}
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group
+                ${isActive
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
+                }`}
+            >
+              <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? 'text-primary' : 'group-hover:text-foreground'}`} />
+              {!collapsed && <span>{item.label}</span>}
+              {isActive && !collapsed && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User */}
+      <div className="p-4 border-t border-border/20">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+            <Users className="w-4 h-4 text-white" />
+          </div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">Mahasiswa</p>
+              <p className="text-xs text-muted-foreground truncate">Aktif</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Mobile toggle */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="fixed top-4 left-4 z-50 lg:hidden w-10 h-10 glass rounded-xl flex items-center justify-center"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile sidebar */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.aside
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 left-0 bottom-0 w-[260px] bg-sidebar z-50 lg:hidden border-r border-border/20"
+          >
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-lg hover:bg-secondary flex items-center justify-center"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <SidebarContent />
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop sidebar */}
+      <aside className={`hidden lg:flex flex-col fixed top-0 left-0 bottom-0 bg-sidebar border-r border-border/20 z-30 transition-all duration-300 ${collapsed ? 'w-[68px]' : 'w-[240px]'}`}>
+        <SidebarContent />
+      </aside>
+    </>
+  );
+}

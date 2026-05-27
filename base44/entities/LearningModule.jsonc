@@ -1,0 +1,55 @@
+{
+  "name": "LearningModule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Judul modul"
+    },
+    "description": {
+      "type": "string",
+      "description": "Deskripsi modul"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "pragmatik_dasar",
+        "kesantunan",
+        "speech_acts",
+        "implikatur",
+        "etika_digital",
+        "komunikasi_toksis",
+        "etnografi_digital"
+      ],
+      "description": "Kategori modul"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "pemula",
+        "menengah",
+        "lanjutan"
+      ],
+      "default": "pemula"
+    },
+    "content": {
+      "type": "string",
+      "description": "Konten modul dalam HTML/Markdown"
+    },
+    "order": {
+      "type": "number",
+      "description": "Urutan modul"
+    },
+    "estimated_duration": {
+      "type": "number",
+      "description": "Estimasi durasi dalam menit"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL gambar cover"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

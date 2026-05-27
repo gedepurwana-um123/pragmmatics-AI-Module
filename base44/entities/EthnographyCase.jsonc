@@ -1,0 +1,69 @@
+{
+  "name": "EthnographyCase",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Judul kasus"
+    },
+    "description": {
+      "type": "string",
+      "description": "Deskripsi kasus"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "twitter",
+        "tiktok",
+        "whatsapp",
+        "facebook",
+        "forum_online"
+      ],
+      "description": "Platform media sosial"
+    },
+    "communication_type": {
+      "type": "string",
+      "enum": [
+        "santun",
+        "kurang_santun",
+        "toksis",
+        "netral",
+        "ambigu"
+      ],
+      "description": "Jenis komunikasi"
+    },
+    "cultural_context": {
+      "type": "string",
+      "description": "Konteks budaya"
+    },
+    "speech_act": {
+      "type": "string",
+      "enum": [
+        "asertif",
+        "direktif",
+        "komisif",
+        "ekspresif",
+        "deklaratif"
+      ],
+      "description": "Jenis speech act"
+    },
+    "content": {
+      "type": "string",
+      "description": "Konten lengkap kasus"
+    },
+    "analysis": {
+      "type": "string",
+      "description": "Analisis pragmatik"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

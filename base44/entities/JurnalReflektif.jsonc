@@ -1,0 +1,44 @@
+{
+  "name": "JurnalReflektif",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Judul refleksi"
+    },
+    "content": {
+      "type": "string",
+      "description": "Isi refleksi"
+    },
+    "mood": {
+      "type": "string",
+      "enum": [
+        "sangat_positif",
+        "positif",
+        "netral",
+        "negatif",
+        "sangat_negatif"
+      ],
+      "description": "Suasana hati saat refleksi"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tag refleksi"
+    },
+    "ai_feedback": {
+      "type": "string",
+      "description": "Umpan balik AI"
+    },
+    "module_id": {
+      "type": "string",
+      "description": "ID modul terkait"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}
