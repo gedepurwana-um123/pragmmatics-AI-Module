@@ -5,7 +5,7 @@ import {
   LayoutDashboard, BookOpen, Bot, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
-  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2
+  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater
 } from 'lucide-react';
 
 const menuItems = [
@@ -17,6 +17,8 @@ const menuItems = [
   { icon: FlaskConical, label: 'Lab Media Sosial', path: '/social-lab', group: 'Belajar' },
   { icon: PenLine, label: 'Jurnal Reflektif', path: '/journal', group: 'Belajar' },
   { icon: Lightbulb, label: 'Belajar Adaptif', path: '/adaptive-learning', group: 'Belajar' },
+  { icon: Mic, label: 'AI Pragmatics Tutor', path: '/ai-pragmatics-tutor', group: 'Belajar' },
+  { icon: Theater, label: 'Virtual Roleplay Lab', path: '/virtual-roleplay-lab', group: 'Belajar' },
   { icon: MessageSquare, label: 'Forum Komunitas', path: '/community', group: 'Kolaborasi' },
   { icon: Swords, label: 'Tantangan Kelompok', path: '/group-challenge', group: 'Kolaborasi' },
   { icon: BookMarked, label: 'Perpustakaan Kasus', path: '/case-library', group: 'Kolaborasi' },

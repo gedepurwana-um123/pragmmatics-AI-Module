@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Clock, BarChart3, ChevronRight, Play, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Clock, BarChart3, ChevronRight, Play, CheckCircle2, Mic, Theater, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 
 const modules = [
   { id: 1, title: 'Pengantar Pragmatik Digital', desc: 'Memahami dasar-dasar pragmatik dalam konteks komunikasi digital dan media sosial.', category: 'Pragmatik Dasar', duration: 45, progress: 85, difficulty: 'Pemula' },
@@ -43,6 +44,38 @@ export default function Modules() {
           <p className="text-2xl font-bold font-montserrat text-accent">395</p>
           <p className="text-xs text-muted-foreground">Menit Total</p>
         </div>
+      </div>
+
+      {/* AI Feature Cards */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Link to="/ai-pragmatics-tutor">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-200 p-5 cursor-pointer hover:shadow-md hover:border-violet-300 transition-all group">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
+                <Mic className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200 font-semibold">✨ Baru</span>
+            </div>
+            <h3 className="font-bold font-montserrat text-sm text-foreground mb-1 group-hover:text-violet-700 transition-colors">AI Pragmatics Tutor</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">Rekam suara Anda dan dapatkan analisis aksen, intonasi, dan kesantunan berbasis AI secara real-time.</p>
+            <div className="mt-3 flex items-center text-xs font-semibold text-violet-600">Mulai Latihan <ChevronRight className="w-3.5 h-3.5 ml-1" /></div>
+          </motion.div>
+        </Link>
+        <Link to="/virtual-roleplay-lab">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+            className="bg-gradient-to-br from-cyan-50 to-teal-50 rounded-2xl border border-cyan-200 p-5 cursor-pointer hover:shadow-md hover:border-cyan-300 transition-all group">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center">
+                <Theater className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 border border-cyan-200 font-semibold">✨ Baru</span>
+            </div>
+            <h3 className="font-bold font-montserrat text-sm text-foreground mb-1 group-hover:text-cyan-700 transition-colors">Virtual Roleplay Lab</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">Latih respons pragmatik melalui skenario percakapan interaktif dengan NPC berkarakter berbeda.</p>
+            <div className="mt-3 flex items-center text-xs font-semibold text-cyan-600">Mulai Roleplay <ChevronRight className="w-3.5 h-3.5 ml-1" /></div>
+          </motion.div>
+        </Link>
       </div>
 
       {/* Module grid */}

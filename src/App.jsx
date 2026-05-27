@@ -30,6 +30,8 @@ import CaseLibrary from './pages/CaseLibrary';
 import Community from './pages/Community';
 import AdaptiveLearning from './pages/AdaptiveLearning';
 import WeeklyReport from './pages/WeeklyReport';
+import AIPragmaticsTutor from './pages/AIPragmaticsTutor';
+import VirtualRoleplayLab from './pages/VirtualRoleplayLab';
 
 // After login redirect, send user to correct dashboard based on role intent
 const RoleRedirect = () => {
@@ -104,6 +106,8 @@ const AuthenticatedApp = () => {
         <Route path="/community" element={<Community />} />
         <Route path="/adaptive-learning" element={<AdaptiveLearning />} />
         <Route path="/weekly-report" element={<WeeklyReport />} />
+        <Route path="/ai-pragmatics-tutor" element={<AIPragmaticsTutor />} />
+        <Route path="/virtual-roleplay-lab" element={<VirtualRoleplayLab />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
