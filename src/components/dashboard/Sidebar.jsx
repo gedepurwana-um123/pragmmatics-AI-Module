@@ -21,6 +21,8 @@ const menuItems = [
   { icon: Mic, label: 'AI Pragmatics Tutor', path: '/ai-pragmatics-tutor', group: 'Belajar' },
   { icon: Theater, label: 'Virtual Roleplay Lab', path: '/virtual-roleplay-lab', group: 'Belajar' },
   { icon: Database, label: 'Perpustakaan Etnografi', path: '/ethnography-case-library', group: 'Belajar' },
+  { icon: Globe, label: 'Wisata Budaya Pragmatik', path: '/pragmatic-cultural-tour', group: 'Belajar' },
+  { icon: Users, label: 'Kolaborasi Kelompok', path: '/study-group', group: 'Kolaborasi' },
   { icon: MessageSquare, label: 'Forum Komunitas', path: '/community', group: 'Kolaborasi' },
   { icon: Swords, label: 'Tantangan Kelompok', path: '/group-challenge', group: 'Kolaborasi' },
   { icon: BookMarked, label: 'Perpustakaan Kasus', path: '/case-library', group: 'Kolaborasi' },

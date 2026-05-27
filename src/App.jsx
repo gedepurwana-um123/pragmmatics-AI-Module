@@ -33,6 +33,8 @@ import WeeklyReport from './pages/WeeklyReport';
 import AIPragmaticsTutor from './pages/AIPragmaticsTutor';
 import VirtualRoleplayLab from './pages/VirtualRoleplayLab';
 import EthnographyCaseLibrary from './pages/EthnographyCaseLibrary';
+import StudyGroupCollaboration from './pages/StudyGroupCollaboration';
+import PragmaticCulturalTour from './pages/PragmaticCulturalTour';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -72,6 +74,8 @@ const AuthenticatedApp = () => {
         <Route path="/ai-pragmatics-tutor" element={<AIPragmaticsTutor />} />
         <Route path="/virtual-roleplay-lab" element={<VirtualRoleplayLab />} />
         <Route path="/ethnography-case-library" element={<EthnographyCaseLibrary />} />
+        <Route path="/study-group" element={<StudyGroupCollaboration />} />
+        <Route path="/pragmatic-cultural-tour" element={<PragmaticCulturalTour />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

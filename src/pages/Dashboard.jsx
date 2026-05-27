@@ -12,6 +12,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer,
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
+import LearningProgressDashboard from '@/components/dashboard/LearningProgressDashboard';
 
 const progressData = [
   { day: 'Sen', kesantunan: 65, pragmatik: 60, toxicity: 40 },
@@ -215,6 +216,11 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Learning Progress Dashboard */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
+        <LearningProgressDashboard />
       </motion.div>
 
       {/* Quick actions + Modules */}
