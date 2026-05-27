@@ -21,6 +21,8 @@ import Achievements from './pages/Achievements';
 import LecturerDashboard from './pages/LecturerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Settings from './pages/Settings';
+import LearningEcosystem from './pages/LearningEcosystem';
+import CulturalWisdom from './pages/CulturalWisdom';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 
 // After login redirect, send user to correct dashboard based on role intent
@@ -84,6 +86,8 @@ const AuthenticatedApp = () => {
         <Route path="/lecturer" element={<LecturerDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/learning-ecosystem" element={<LearningEcosystem />} />
+        <Route path="/cultural-wisdom" element={<CulturalWisdom />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

@@ -5,7 +5,6 @@ import FeatureSection from '../components/landing/FeatureSection';
 import AIAnalyzerDemo from '../components/landing/AIAnalyzerDemo';
 import AnalyticsPreview from '../components/landing/AnalyticsPreview';
 import Footer from '../components/landing/Footer';
-import InfoWidget from '../components/landing/InfoWidget';
 import LoginModal from '../components/landing/LoginModal';
 import { Brain, LogIn, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -21,18 +20,6 @@ export default function Landing() {
 
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50">
-        {/* Top bar — info widget */}
-        <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-cyan-700 px-4 sm:px-6 py-1.5">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <span className="text-white/80 text-xs hidden sm:block font-medium">
-              🎓 Platform Pembelajaran Pragmatik Digital Berbasis AI
-            </span>
-            <div className="ml-auto">
-              <InfoWidget />
-            </div>
-          </div>
-        </div>
-
         {/* Main navbar */}
         <div className="bg-white/95 backdrop-blur-xl border-b border-indigo-100 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">

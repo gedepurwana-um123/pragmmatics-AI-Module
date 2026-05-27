@@ -4,21 +4,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, BookOpen, Bot, MessageSquare, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
-  ChevronLeft, Brain, Users, Menu, X, Library
+  ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe
 } from 'lucide-react';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: BookOpen, label: 'Modul Saya', path: '/modules' },
-  { icon: Bot, label: 'Asisten AI', path: '/ai-analyzer' },
-  { icon: FlaskConical, label: 'Lab Media Sosial', path: '/social-lab' },
-  { icon: BarChart3, label: 'Analisis Pragmatik', path: '/ai-analyzer' },
-  { icon: MessageSquare, label: 'Simulasi Interaksi', path: '/social-lab' },
-  { icon: PenLine, label: 'Jurnal Reflektif', path: '/journal' },
-  { icon: TrendingUp, label: 'Analitik', path: '/analytics' },
-  { icon: Library, label: 'Perpustakaan Kasus', path: '/ethnography' },
-  { icon: Award, label: 'Pencapaian', path: '/achievements' },
-  { icon: Settings, label: 'Pengaturan', path: '/settings' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
+  { icon: Layers, label: 'Skenario Belajar', path: '/learning-ecosystem', group: 'Ekosistem' },
+  { icon: Globe, label: 'Kearifan Budaya AI', path: '/cultural-wisdom', group: 'Ekosistem' },
+  { icon: BookOpen, label: 'Modul Saya', path: '/modules', group: 'Belajar' },
+  { icon: Bot, label: 'Asisten AI', path: '/ai-analyzer', group: 'Belajar' },
+  { icon: FlaskConical, label: 'Lab Media Sosial', path: '/social-lab', group: 'Belajar' },
+  { icon: PenLine, label: 'Jurnal Reflektif', path: '/journal', group: 'Belajar' },
+  { icon: Library, label: 'Perpustakaan Kasus', path: '/ethnography', group: 'Analitik' },
+  { icon: TrendingUp, label: 'Analitik', path: '/analytics', group: 'Analitik' },
+  { icon: Award, label: 'Pencapaian', path: '/achievements', group: 'Analitik' },
+  { icon: Settings, label: 'Pengaturan', path: '/settings', group: null },
 ];
 
 export default function Sidebar() {
@@ -45,26 +45,32 @@ export default function Sidebar() {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => {
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+        {menuItems.map((item, idx) => {
           const isActive = location.pathname === item.path;
+          const prevGroup = menuItems[idx - 1]?.group;
+          const showGroupLabel = !collapsed && item.group && item.group !== prevGroup;
           return (
-            <Link
-              key={item.path + item.label}
-              to={item.path}
-              onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group
-                ${isActive
-                  ? 'bg-primary/10 text-primary font-semibold'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                }`}
-            >
-              <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? 'text-primary' : 'group-hover:text-foreground'}`} />
-              {!collapsed && <span>{item.label}</span>}
-              {isActive && !collapsed && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+            <React.Fragment key={item.path + item.label}>
+              {showGroupLabel && (
+                <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest px-3 pt-3 pb-1">{item.group}</p>
               )}
-            </Link>
+              <Link
+                to={item.path}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group
+                  ${isActive
+                    ? 'bg-primary/10 text-primary font-semibold'
+                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                  }`}
+              >
+                <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? 'text-primary' : 'group-hover:text-foreground'}`} />
+                {!collapsed && <span>{item.label}</span>}
+                {isActive && !collapsed && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+                )}
+              </Link>
+            </React.Fragment>
           );
         })}
       </nav>
