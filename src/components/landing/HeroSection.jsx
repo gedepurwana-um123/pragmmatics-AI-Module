@@ -54,9 +54,9 @@ export default function HeroSection() {
             Etika Digital
           </span>
           <br />
-          <span className="text-foreground">dengan Modul Pragmatik </span>
-          <span className="bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">
-            Kecerdasan AI
+          <span className="text-[hsl(var(--destructive))]">dengan Modul Pragmatik </span>
+          <span className="bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">Terintegrasu AI
+
           </span>
         </motion.h1>
 
