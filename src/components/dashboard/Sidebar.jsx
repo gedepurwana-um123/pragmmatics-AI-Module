@@ -34,7 +34,7 @@ export default function Sidebar() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
             <Brain className="w-4 h-4 text-white" />
           </div>
-          {!collapsed && <span className="font-bold font-space text-sm">PragmaticsAI</span>}
+          {!collapsed && <span className="font-bold font-montserrat text-sm">PragmaticsAI</span>}
         </Link>
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -55,8 +55,8 @@ export default function Sidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group
                 ${isActive
-                  ? 'bg-primary/10 text-primary font-medium'
-                  : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
+                  ? 'bg-primary/10 text-primary font-semibold'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                 }`}
             >
               <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isActive ? 'text-primary' : 'group-hover:text-foreground'}`} />

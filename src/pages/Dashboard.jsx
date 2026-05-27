@@ -41,10 +41,10 @@ const quickActions = [
 
 export default function Dashboard() {
   return (
-    <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6 bg-background min-h-screen">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl sm:text-3xl font-bold font-space">Dashboard Mahasiswa</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-montserrat">Dashboard Mahasiswa</h1>
         <p className="text-muted-foreground mt-1">Selamat datang kembali! Lanjutkan perjalanan belajar Anda.</p>
       </motion.div>
 
@@ -56,12 +56,12 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="glass-light rounded-2xl p-5 hover:border-primary/20 transition-all"
+            className="bg-white rounded-2xl p-5 border border-border shadow-sm hover:border-primary/30 hover:shadow-md transition-all"
           >
             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3`}>
               <s.icon className="w-5 h-5 text-white" />
             </div>
-            <p className="text-2xl font-bold font-space">{s.value}</p>
+            <p className="text-2xl font-bold font-montserrat">{s.value}</p>
             <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
           </motion.div>
         ))}
@@ -73,15 +73,15 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="lg:col-span-2 glass-light rounded-2xl p-6"
+          className="lg:col-span-2 bg-white rounded-2xl p-6 border border-border shadow-sm"
         >
-          <h3 className="font-semibold font-space mb-4">Progress Pembelajaran Mingguan</h3>
+          <h3 className="font-semibold font-montserrat mb-4">Progress Pembelajaran Mingguan</h3>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={progressData}>
                 <defs>
                   <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.4} />
+                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2} />
                     <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
                   </linearGradient>
                 </defs>
@@ -96,14 +96,14 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-light rounded-2xl p-6"
+          className="bg-white rounded-2xl p-6 border border-border shadow-sm"
         >
-          <h3 className="font-semibold font-space mb-4">Profil Pragmatik</h3>
+          <h3 className="font-semibold font-montserrat mb-4">Profil Pragmatik</h3>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData}>
-                <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                <PolarGrid stroke="rgba(0,0,0,0.07)" />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10 }} />
                 <Radar name="Profil" dataKey="A" stroke="#06B6D4" fill="#06B6D4" fillOpacity={0.3} />
               </RadarChart>
             </ResponsiveContainer>
@@ -120,12 +120,12 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + i * 0.05 }}
               whileHover={{ y: -4 }}
-              className="glass-light rounded-2xl p-5 group cursor-pointer hover:border-primary/20 transition-all"
+              className="bg-white rounded-2xl p-5 border border-border shadow-sm group cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
             >
               <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                 <a.icon className="w-5 h-5 text-white" />
               </div>
-              <h4 className="font-semibold font-space text-sm">{a.label}</h4>
+              <h4 className="font-semibold font-montserrat text-sm">{a.label}</h4>
               <p className="text-xs text-muted-foreground mt-1">{a.desc}</p>
             </motion.div>
           </Link>
@@ -137,10 +137,10 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="glass-light rounded-2xl p-6"
+        className="bg-white rounded-2xl p-6 border border-border shadow-sm"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold font-space">Modul Terbaru</h3>
+          <h3 className="font-semibold font-montserrat">Modul Terbaru</h3>
           <Link to="/modules" className="text-xs text-primary hover:underline flex items-center gap-1">
             Lihat Semua <ArrowRight className="w-3 h-3" />
           </Link>
@@ -155,7 +155,7 @@ export default function Dashboard() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{m.title}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <div className="w-24 h-1.5 bg-background rounded-full overflow-hidden">
+                    <div className="w-24 h-1.5 bg-secondary rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
                         style={{ width: `${m.progress}%` }}

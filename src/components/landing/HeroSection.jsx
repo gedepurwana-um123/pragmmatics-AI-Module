@@ -18,7 +18,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-light mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200 mb-8"
         >
           <Sparkles className="w-4 h-4 text-accent" />
           <span className="text-sm font-medium text-accent">Platform Pembelajaran Pragmatik Berbasis AI</span>
@@ -29,12 +29,12 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-space leading-tight mb-6"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-montserrat leading-tight mb-6"
         >
           <span className="text-foreground">Transformasi </span>
           <span className="text-gradient">Etika Komunikasi Digital</span>
-          <br />
-          <span className="text-foreground">melalui Pembelajaran </span>
+          <br className="hidden sm:block" />
+          <span className="text-foreground"> melalui </span>
           <span className="text-gradient">Pragmatik Berbasis AI</span>
         </motion.h1>
 
@@ -81,7 +81,7 @@ export default function HeroSection() {
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -top-10 right-10 hidden lg:block"
         >
-          <div className="glass-light rounded-2xl px-4 py-3 text-sm text-muted-foreground">
+          <div className="bg-white border border-border shadow-lg rounded-2xl px-4 py-3 text-sm text-muted-foreground">
             💬 "Bagaimana cara menyampaikan kritik yang santun?"
           </div>
         </motion.div>
@@ -91,8 +91,8 @@ export default function HeroSection() {
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute -bottom-5 left-10 hidden lg:block"
         >
-          <div className="glass-light rounded-2xl px-4 py-3 text-sm">
-            <span className="text-emerald-400">Kesantunan: 92%</span> · <span className="text-accent">Empati Digital: Tinggi</span>
+          <div className="bg-white border border-border shadow-lg rounded-2xl px-4 py-3 text-sm">
+            <span className="text-emerald-600 font-semibold">Kesantunan: 92%</span> · <span className="text-cyan-600 font-semibold">Empati Digital: Tinggi</span>
           </div>
         </motion.div>
       </div>

@@ -25,22 +25,22 @@ export default function Modules() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl sm:text-3xl font-bold font-space">Modul Pembelajaran</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-montserrat">Modul Pembelajaran</h1>
         <p className="text-muted-foreground mt-1">Materi pembelajaran pragmatik digital yang interaktif dan komprehensif.</p>
       </motion.div>
 
       {/* Stats overview */}
       <div className="grid grid-cols-3 gap-4">
         <div className="glass-light rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold font-space text-primary">8</p>
+          <p className="text-2xl font-bold font-montserrat text-primary">8</p>
           <p className="text-xs text-muted-foreground">Total Modul</p>
         </div>
         <div className="glass-light rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold font-space text-emerald-400">2</p>
+          <p className="text-2xl font-bold font-montserrat text-emerald-400">2</p>
           <p className="text-xs text-muted-foreground">Sedang Berjalan</p>
         </div>
         <div className="glass-light rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold font-space text-accent">395</p>
+          <p className="text-2xl font-bold font-montserrat text-accent">395</p>
           <p className="text-xs text-muted-foreground">Menit Total</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function Modules() {
               </div>
               <Badge className={`text-xs border ${difficultyColors[m.difficulty]}`}>{m.difficulty}</Badge>
             </div>
-            <h3 className="font-semibold font-space text-sm mb-1 group-hover:text-primary transition-colors">{m.title}</h3>
+            <h3 className="font-semibold font-montserrat text-sm mb-1 group-hover:text-primary transition-colors">{m.title}</h3>
             <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{m.desc}</p>
 
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">

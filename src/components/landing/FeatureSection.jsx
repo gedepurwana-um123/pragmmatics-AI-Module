@@ -26,7 +26,7 @@ export default function FeatureSection() {
           className="text-center mb-16"
         >
           <span className="text-accent text-sm font-semibold uppercase tracking-wider">Fitur Unggulan</span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-space mt-3 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold font-montserrat mt-3 mb-4">
             Ekosistem Pembelajaran <span className="text-gradient">Pragmatik Digital</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -43,12 +43,12 @@ export default function FeatureSection() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group glass-light rounded-2xl p-6 hover:border-primary/30 transition-all duration-500 cursor-default"
+              className="group bg-white rounded-2xl p-6 border border-border shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-500 cursor-default"
             >
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                 <f.icon className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2 font-space text-sm">{f.title}</h3>
+              <h3 className="font-semibold text-foreground mb-2 font-montserrat text-sm">{f.title}</h3>
               <p className="text-muted-foreground text-xs leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}

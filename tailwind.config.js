@@ -5,8 +5,8 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			inter: ['var(--font-inter)'],
-  			space: ['var(--font-space)'],
+  			'open-sans': ['var(--font-open-sans)'],
+  			montserrat: ['var(--font-montserrat)'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

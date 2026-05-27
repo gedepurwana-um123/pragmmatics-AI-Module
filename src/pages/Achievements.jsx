@@ -20,7 +20,7 @@ export default function Achievements() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl sm:text-3xl font-bold font-space">Pencapaian</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-montserrat">Pencapaian</h1>
         <p className="text-muted-foreground mt-1">Lacak pencapaian dan kemajuan belajar Anda.</p>
       </motion.div>
 
@@ -28,22 +28,22 @@ export default function Achievements() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="glass-light rounded-2xl p-4 text-center">
           <Award className="w-6 h-6 text-amber-400 mx-auto mb-2" />
-          <p className="text-xl font-bold font-space">{stats.unlocked}/{stats.total}</p>
+          <p className="text-xl font-bold font-montserrat">{stats.unlocked}/{stats.total}</p>
           <p className="text-xs text-muted-foreground">Terbuka</p>
         </div>
         <div className="glass-light rounded-2xl p-4 text-center">
           <Flame className="w-6 h-6 text-rose-400 mx-auto mb-2" />
-          <p className="text-xl font-bold font-space">{stats.streak}</p>
+          <p className="text-xl font-bold font-montserrat">{stats.streak}</p>
           <p className="text-xs text-muted-foreground">Hari Streak</p>
         </div>
         <div className="glass-light rounded-2xl p-4 text-center">
           <Star className="w-6 h-6 text-primary mx-auto mb-2" />
-          <p className="text-xl font-bold font-space">{stats.points}</p>
+          <p className="text-xl font-bold font-montserrat">{stats.points}</p>
           <p className="text-xs text-muted-foreground">Poin XP</p>
         </div>
         <div className="glass-light rounded-2xl p-4 text-center">
           <Trophy className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-          <p className="text-xl font-bold font-space">Perak</p>
+          <p className="text-xl font-bold font-montserrat">Perak</p>
           <p className="text-xs text-muted-foreground">Level</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Achievements() {
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.color} flex items-center justify-center mb-3 ${a.unlocked ? '' : 'grayscale'}`}>
               <a.icon className="w-6 h-6 text-white" />
             </div>
-            <h3 className="font-semibold font-space text-sm">{a.title}</h3>
+            <h3 className="font-semibold font-montserrat text-sm">{a.title}</h3>
             <p className="text-xs text-muted-foreground mt-1">{a.desc}</p>
             <div className="mt-3">
               {a.unlocked ? (

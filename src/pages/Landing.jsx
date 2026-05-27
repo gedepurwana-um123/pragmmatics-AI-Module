@@ -15,13 +15,13 @@ export default function Landing() {
       <ParticleBackground />
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-border shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center">
               <Brain className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold font-space text-lg">PragmaticsAI</span>
+            <span className="font-bold font-montserrat text-lg text-foreground">PragmaticsAI</span>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#fitur" className="hover:text-foreground transition-colors">Fitur</a>
