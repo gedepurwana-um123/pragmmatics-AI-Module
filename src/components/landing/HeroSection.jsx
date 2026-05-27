@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 import InfoWidget from './InfoWidget';
 
 const stats = [
-  { icon: Shield, label: 'Kesantunan Meningkat', value: '94%', color: 'text-emerald-600' },
-  { icon: TrendingUp, label: 'Mahasiswa Aktif', value: '1.2K+', color: 'text-indigo-600' },
-  { icon: Bot, label: 'Interaksi AI', value: '28K+', color: 'text-cyan-600' },
-  { icon: Sparkles, label: 'Budaya Terintegrasi', value: '3', color: 'text-violet-600' },
-];
+{ icon: Shield, label: 'Kesantunan Meningkat', value: '94%', color: 'text-emerald-600' },
+{ icon: TrendingUp, label: 'Mahasiswa Aktif', value: '1.2K+', color: 'text-indigo-600' },
+{ icon: Bot, label: 'Interaksi AI', value: '28K+', color: 'text-cyan-600' },
+{ icon: Sparkles, label: 'Budaya Terintegrasi', value: '3', color: 'text-violet-600' }];
+
 
 export default function HeroSection() {
   return (
@@ -26,8 +26,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-10 overflow-x-auto"
-        >
+          className="mb-10 overflow-x-auto">
+          
           <InfoWidget />
         </motion.div>
 
@@ -36,8 +36,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200 mb-6"
-        >
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200 mb-6">
+          
           <Sparkles className="w-4 h-4 text-indigo-500" />
           <span className="text-sm font-semibold text-indigo-600">Platform Pragmatik Digital · AI-Powered</span>
         </motion.div>
@@ -47,14 +47,14 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold font-montserrat leading-tight mb-5"
-        >
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold font-montserrat leading-tight mb-5">
+          
           <span className="text-foreground">Kuasai </span>
           <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
             Etika Digital
           </span>
           <br />
-          <span className="text-foreground">dengan </span>
+          <span className="text-foreground">dengan Modul Pragmatik </span>
           <span className="bg-gradient-to-r from-cyan-500 to-teal-600 bg-clip-text text-transparent">
             Kecerdasan AI
           </span>
@@ -65,8 +65,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
-        >
+          className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+          
           Ekosistem pembelajaran pragmatik berbasis AI untuk meningkatkan kompetensi 
           komunikasi etis mahasiswa di era media sosial.
         </motion.p>
@@ -76,8 +76,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-4 mb-14"
-        >
+          className="flex flex-wrap items-center justify-center gap-4 mb-14">
+          
           <Link to="/dashboard">
             <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white px-8 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
               Mulai Sekarang
@@ -102,19 +102,19 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="flex flex-wrap items-center justify-center gap-5"
-        >
-          {stats.map((s, i) => (
-            <div key={i} className="flex items-center gap-2 bg-white border border-border rounded-2xl px-5 py-3 shadow-sm">
+          className="flex flex-wrap items-center justify-center gap-5">
+          
+          {stats.map((s, i) =>
+          <div key={i} className="flex items-center gap-2 bg-white border border-border rounded-2xl px-5 py-3 shadow-sm">
               <s.icon className={`w-4 h-4 ${s.color}`} />
               <div className="text-left">
                 <div className={`text-lg font-bold font-montserrat ${s.color}`}>{s.value}</div>
                 <div className="text-xs text-muted-foreground">{s.label}</div>
               </div>
             </div>
-          ))}
+          )}
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
