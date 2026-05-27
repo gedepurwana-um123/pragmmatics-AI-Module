@@ -6,9 +6,10 @@ import { Link } from 'react-router-dom';
 import InfoWidget from './InfoWidget';
 
 const stats = [
-  { icon: Shield, label: 'Kesantunan Bahasa', value: '94%', color: 'text-emerald-600' },
+  { icon: Shield, label: 'Kesantunan Meningkat', value: '94%', color: 'text-emerald-600' },
   { icon: TrendingUp, label: 'Mahasiswa Aktif', value: '1.2K+', color: 'text-indigo-600' },
   { icon: Bot, label: 'Interaksi AI', value: '28K+', color: 'text-cyan-600' },
+  { icon: Sparkles, label: 'Budaya Terintegrasi', value: '3', color: 'text-violet-600' },
 ];
 
 export default function HeroSection() {

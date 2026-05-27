@@ -1,255 +1,264 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { PenLine, Plus, Bot, Calendar, Sparkles, RefreshCw, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import {
+  PenLine, Brain, RefreshCw, Sparkles, BookOpen, Globe,
+  MessageSquare, ChevronRight, X, Lightbulb, Heart
+} from 'lucide-react';
+import { buildReflectivePrompt } from '@/lib/aiPrompts';
 
-const moodOptions = [
-  { value: 'sangat_positif', emoji: '😊', label: 'Sangat Positif', color: 'bg-emerald-50 border-emerald-300 text-emerald-700' },
-  { value: 'positif', emoji: '🙂', label: 'Positif', color: 'bg-blue-50 border-blue-300 text-blue-700' },
-  { value: 'netral', emoji: '😐', label: 'Netral', color: 'bg-slate-50 border-slate-300 text-slate-700' },
-  { value: 'negatif', emoji: '😟', label: 'Negatif', color: 'bg-amber-50 border-amber-300 text-amber-700' },
-  { value: 'sangat_negatif', emoji: '😔', label: 'Sangat Negatif', color: 'bg-rose-50 border-rose-300 text-rose-700' },
+const MOODS = [
+  { key: 'sangat_positif', emoji: '😄', label: 'Sangat Positif', color: 'bg-emerald-100 border-emerald-300 text-emerald-700' },
+  { key: 'positif', emoji: '🙂', label: 'Positif', color: 'bg-blue-100 border-blue-300 text-blue-700' },
+  { key: 'netral', emoji: '😐', label: 'Netral', color: 'bg-secondary border-border text-muted-foreground' },
+  { key: 'negatif', emoji: '😔', label: 'Negatif', color: 'bg-amber-100 border-amber-300 text-amber-700' },
+  { key: 'sangat_negatif', emoji: '😢', label: 'Sangat Negatif', color: 'bg-rose-100 border-rose-300 text-rose-700' },
 ];
 
-const reflectionPrompts = [
-  "Ceritakan pengalaman komunikasi digital Anda hari ini. Apa yang Anda pelajari tentang kesantunan berbahasa?",
-  "Apakah Anda menemukan ujaran toksis di media sosial hari ini? Bagaimana respons Anda dan apa yang dapat dipelajari?",
-  "Refleksikan: Bagaimana cara Anda menyampaikan ketidaksetujuan secara santun dan etis di media sosial?",
-  "Apa tantangan terbesar Anda dalam menjaga etika komunikasi digital? Bagaimana Anda mengatasinya?",
-  "Identifikasi satu situasi komunikasi digital yang menarik hari ini dan analisis aspek pragmatiknya.",
-  "Bagaimana budaya dan konteks sosial mempengaruhi cara Anda berkomunikasi di platform digital?",
+const PROMPTS = [
+  'Hari ini saya menemukan komunikasi digital yang menarik ketika...',
+  'Refleksi saya tentang pola kesantunan yang saya amati di media sosial...',
+  'Sebuah ujaran yang membuat saya berpikir tentang etika komunikasi...',
+  'Bagaimana nilai budaya Tolaki/Muna/Buton mempengaruhi cara saya berkomunikasi...',
+  'Perkembangan kompetensi pragmatik saya hari ini ditunjukkan dengan...',
+  'Satu momen komunikasi yang mengajarkan saya tentang empati digital...',
 ];
 
 export default function Journal() {
+  const [entries, setEntries] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mood, setMood] = useState('netral');
   const [aiFeedback, setAiFeedback] = useState('');
-  const [loadingAI, setLoadingAI] = useState(false);
-  const [expandedId, setExpandedId] = useState(null);
-  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState(null);
 
-  const { data: journals = [], isLoading } = useQuery({
-    queryKey: ['journals'],
-    queryFn: () => base44.entities.JurnalReflektif.list('-created_date', 50),
-  });
+  useEffect(() => {
+    base44.entities.JurnalReflektif.list('-created_date', 20)
+      .then(data => setEntries(data || []))
+      .catch(() => {});
+  }, []);
 
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.JurnalReflektif.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['journals'] });
-      setShowForm(false);
-      setTitle('');
-      setContent('');
-      setMood('netral');
-      setAiFeedback('');
-    },
-  });
+  const generatePrompt = () => {
+    const p = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+    setContent(p);
+  };
 
-  const getAIFeedback = async () => {
+  const getAiFeedback = async () => {
     if (!content.trim()) return;
-    setLoadingAI(true);
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `Anda adalah mentor akademis yang memberikan umpan balik reflektif dan mendorong pemikiran kritis. Berikan respons untuk refleksi mahasiswa ini tentang etika komunikasi digital:
-
-Judul: "${title}"
-Isi refleksi: "${content}"
-Suasana hati: ${mood}
-
-Berikan umpan balik yang:
-1. Mengapresiasi dengan hangat refleksi mereka
-2. Memberikan wawasan tambahan tentang pragmatik dan etika komunikasi
-3. Mengajukan pertanyaan refleksi lanjutan untuk mendorong pemikiran lebih dalam
-4. Merekomendasikan konsep pragmatik yang relevan untuk dipelajari
-Gunakan bahasa Indonesia yang hangat, akademis, dan memotivasi. Maksimal 200 kata.`
-    });
+    setAiLoading(true);
+    const moodLabel = MOODS.find(m => m.key === mood)?.label || 'netral';
+    const prompt = buildReflectivePrompt(content, moodLabel);
+    const res = await base44.integrations.Core.InvokeLLM({ prompt });
     setAiFeedback(res);
-    setLoadingAI(false);
+    setAiLoading(false);
   };
 
-  const handleSave = () => {
-    createMutation.mutate({ title, content, mood, ai_feedback: aiFeedback });
+  const handleSubmit = async () => {
+    if (!title.trim() || !content.trim()) return;
+    setLoading(true);
+    let feedback = aiFeedback;
+    if (!feedback) {
+      const moodLabel = MOODS.find(m => m.key === mood)?.label || 'netral';
+      const prompt = buildReflectivePrompt(content, moodLabel);
+      feedback = await base44.integrations.Core.InvokeLLM({ prompt });
+    }
+    const entry = await base44.entities.JurnalReflektif.create({
+      title, content, mood, ai_feedback: feedback, tags: [],
+    });
+    setEntries(prev => [entry, ...prev]);
+    setTitle('');
+    setContent('');
+    setMood('netral');
+    setAiFeedback('');
+    setShowForm(false);
+    setLoading(false);
   };
 
-  const randomPrompt = () => {
-    const prompt = reflectionPrompts[Math.floor(Math.random() * reflectionPrompts.length)];
-    setContent(prev => prompt + '\n\n' + (prev && prev !== prompt ? prev : ''));
-  };
-
-  const getMoodStyle = (val) => moodOptions.find(m => m.value === val) || moodOptions[2];
+  const moodCfg = (key) => MOODS.find(m => m.key === key) || MOODS[2];
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6 bg-background min-h-screen">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Jurnal Reflektif</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Dokumentasikan perjalanan belajar dan refleksi komunikasi digital Anda.</p>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 mb-2">
+              <Brain className="w-3.5 h-3.5 text-violet-500" />
+              <span className="text-xs font-semibold text-violet-600">AI Reflective Learning System · Fase 5</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold font-montserrat text-foreground">Jurnal Reflektif</h1>
+            <p className="text-muted-foreground mt-1 text-sm">Dokumentasi refleksi pembelajaran dengan umpan balik mentor AI berbasis etnografi.</p>
+          </div>
+          <Button onClick={() => setShowForm(!showForm)}
+            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl gap-2"
+          >
+            <PenLine className="w-4 h-4" />Tulis Refleksi
+          </Button>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className={`rounded-xl ${showForm ? 'bg-secondary text-foreground hover:bg-secondary/80 border border-border' : 'bg-primary hover:bg-primary/90 text-white'}`}>
-          {showForm ? <><X className="w-4 h-4 mr-2" />Tutup</> : <><Plus className="w-4 h-4 mr-2" />Tulis Refleksi</>}
-        </Button>
       </motion.div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Total Refleksi', value: entries.length, icon: BookOpen, color: 'text-indigo-600' },
+          { label: 'Minggu Ini', value: entries.filter(e => new Date(e.created_date) > new Date(Date.now() - 7 * 86400000)).length, icon: PenLine, color: 'text-cyan-600' },
+          { label: 'Mendapat Feedback AI', value: entries.filter(e => e.ai_feedback).length, icon: Brain, color: 'text-violet-600' },
+          { label: 'Mood Positif', value: entries.filter(e => ['positif', 'sangat_positif'].includes(e.mood)).length, icon: Heart, color: 'text-emerald-600' },
+        ].map((s, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-border shadow-sm p-4 text-center">
+            <s.icon className={`w-5 h-5 ${s.color} mx-auto mb-1`} />
+            <p className={`text-2xl font-bold font-montserrat ${s.color}`}>{s.value}</p>
+            <p className="text-xs text-muted-foreground">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Journal form */}
       <AnimatePresence>
         {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-white rounded-2xl p-6 space-y-5 border border-border shadow-sm"
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
           >
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Judul Refleksi</label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Judul refleksi Anda..."
-                  className="bg-secondary/30 border-border text-foreground"
-                />
+            <div className="bg-white rounded-2xl border border-indigo-200 shadow-sm p-6 space-y-5">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-foreground flex items-center gap-2">
+                  <PenLine className="w-4 h-4 text-primary" />Tulis Refleksi Baru
+                </h3>
+                <button onClick={() => setShowForm(false)} className="w-7 h-7 rounded-lg hover:bg-secondary flex items-center justify-center">
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
               </div>
+
+              <Input placeholder="Judul refleksi..." value={title} onChange={e => setTitle(e.target.value)} className="bg-secondary/30" />
+
+              {/* Mood */}
               <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 block">Suasana Hati</label>
-                <div className="flex items-center gap-2 flex-wrap">
-                  {moodOptions.map((m) => (
-                    <button
-                      key={m.value}
-                      onClick={() => setMood(m.value)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${mood === m.value ? m.color + ' border' : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary'}`}
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Suasana Hati</p>
+                <div className="flex gap-2 flex-wrap">
+                  {MOODS.map(m => (
+                    <button key={m.key} onClick={() => setMood(m.key)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${mood === m.key ? m.color : 'border-border text-muted-foreground hover:bg-secondary'}`}
                     >
-                      {m.emoji} {m.label}
+                      <span>{m.emoji}</span>{m.label}
                     </button>
                   ))}
                 </div>
               </div>
-            </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Isi Refleksi</label>
-                <Button variant="outline" size="sm" onClick={randomPrompt} className="rounded-lg text-xs h-7 border-border bg-white hover:bg-secondary">
-                  <Sparkles className="w-3 h-3 mr-1 text-primary" /> Prompt Acak
-                </Button>
+              {/* Prompt suggestion */}
+              <div className="flex items-center gap-2">
+                <button onClick={generatePrompt}
+                  className="flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                >
+                  <Lightbulb className="w-3.5 h-3.5" />Prompt Refleksi Acak
+                </button>
+                <button onClick={getAiFeedback} disabled={aiLoading || !content.trim()}
+                  className="flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 px-3 py-1.5 rounded-lg border border-violet-200 bg-violet-50 hover:bg-violet-100 transition-colors disabled:opacity-50"
+                >
+                  {aiLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Brain className="w-3.5 h-3.5" />}Preview Feedback AI
+                </button>
               </div>
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Tulis refleksi Anda di sini tentang pengalaman komunikasi digital, etika berbahasa, atau perjalanan belajar pragmatik..."
-                className="min-h-[200px] bg-secondary/30 border-border resize-none text-sm leading-relaxed"
+
+              <Textarea value={content} onChange={e => setContent(e.target.value)}
+                placeholder="Tulis refleksi Anda tentang pengalaman komunikasi digital hari ini..."
+                className="min-h-[160px] bg-secondary/30 border-border resize-none text-sm"
               />
-              <p className="text-xs text-muted-foreground mt-1 text-right">{content.length} karakter</p>
-            </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Button
-                onClick={getAIFeedback}
-                disabled={loadingAI || !content.trim()}
-                variant="outline"
-                className="rounded-xl border-primary/30 text-primary hover:bg-primary/8 bg-white"
-              >
-                {loadingAI ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Bot className="w-4 h-4 mr-2" />}
-                {loadingAI ? 'Memproses...' : 'Minta Umpan Balik AI'}
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={!title.trim() || !content.trim() || createMutation.isPending}
-                className="bg-primary hover:bg-primary/90 text-white rounded-xl"
-              >
-                {createMutation.isPending ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : null}
-                Simpan Refleksi
-              </Button>
-            </div>
+              {/* AI Feedback preview */}
+              <AnimatePresence>
+                {(aiLoading || aiFeedback) && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="bg-violet-50 rounded-xl border border-violet-200 p-4"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                        <Brain className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-xs font-bold text-violet-700">Umpan Balik AI Reflective Mentor</p>
+                    </div>
+                    {aiLoading
+                      ? <div className="flex gap-1.5">{[0, 0.15, 0.3].map((d, i) => <div key={i} className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style={{ animationDelay: `${d}s` }} />)}</div>
+                      : <p className="text-sm text-violet-800 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
+                    }
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {aiFeedback && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl bg-indigo-50 border border-indigo-200 p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-sm font-semibold text-indigo-700">Umpan Balik AI Mentor</span>
-                </div>
-                <p className="text-sm text-indigo-800 leading-relaxed">{aiFeedback}</p>
-              </motion.div>
-            )}
+              <div className="flex gap-3">
+                <Button onClick={handleSubmit} disabled={loading || !title.trim() || !content.trim()}
+                  className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl gap-2"
+                >
+                  {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {loading ? 'Menyimpan...' : 'Simpan Refleksi'}
+                </Button>
+                <Button variant="outline" onClick={() => setShowForm(false)} className="rounded-xl">Batal</Button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Journal list */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-        </div>
-      ) : journals.length === 0 ? (
-        <div className="bg-white rounded-2xl p-16 text-center border border-border shadow-sm">
-          <div className="w-16 h-16 bg-primary/8 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <PenLine className="w-8 h-8 text-primary/60" />
+      {/* Entries grid */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {entries.length === 0 ? (
+          <div className="col-span-full bg-white rounded-2xl border border-dashed border-border p-12 flex flex-col items-center text-center">
+            <BookOpen className="w-12 h-12 text-muted-foreground/20 mb-3" />
+            <p className="font-semibold text-foreground mb-1">Belum ada jurnal</p>
+            <p className="text-sm text-muted-foreground">Mulai tulis refleksi pertama Anda untuk mendapatkan feedback dari AI Reflective Mentor.</p>
           </div>
-          <h3 className="font-semibold text-foreground mb-2">Belum Ada Jurnal</h3>
-          <p className="text-sm text-muted-foreground max-w-sm mx-auto">Mulai tulis refleksi pertama Anda tentang perjalanan belajar pragmatik dan etika komunikasi digital.</p>
-          <Button onClick={() => setShowForm(true)} className="mt-4 bg-primary hover:bg-primary/90 text-white rounded-xl">
-            <Plus className="w-4 h-4 mr-2" /> Mulai Menulis
-          </Button>
-        </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {journals.map((j, i) => {
-            const ms = getMoodStyle(j.mood);
-            return (
-              <motion.div
-                key={j.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => setExpandedId(expandedId === j.id ? null : j.id)}
-                className="bg-white rounded-2xl p-5 border border-border shadow-sm hover:border-primary/30 hover:shadow-md transition-all cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-2xl">{ms.emoji}</span>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${ms.color}`}>{ms.label}</span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {format(new Date(j.created_date), 'dd MMM yyyy')}
-                    </span>
-                  </div>
+        ) : entries.map((e, i) => {
+          const mc = moodCfg(e.mood);
+          return (
+            <motion.div key={e.id || i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+              className="bg-white rounded-2xl border border-border shadow-sm hover:border-primary/30 hover:shadow-md transition-all cursor-pointer"
+              onClick={() => setSelectedEntry(selectedEntry?.id === e.id ? null : e)}
+            >
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className="font-semibold text-foreground text-sm leading-tight">{e.title}</h3>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${mc.color}`}>{mc.emoji}</span>
                 </div>
-                <h4 className="font-semibold text-foreground text-sm mb-2 line-clamp-1">{j.title}</h4>
-                <p className={`text-xs text-muted-foreground leading-relaxed ${expandedId === j.id ? '' : 'line-clamp-3'}`}>{j.content}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{e.content}</p>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-xs text-muted-foreground">{new Date(e.created_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  {e.ai_feedback && (
+                    <span className="text-xs text-violet-600 flex items-center gap-1"><Brain className="w-3 h-3" />AI Feedback</span>
+                  )}
+                </div>
+              </div>
 
-                {j.ai_feedback && (
-                  <AnimatePresence>
-                    {expandedId === j.id && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                        className="mt-4 pt-4 border-t border-border overflow-hidden"
-                      >
-                        <div className="flex items-center gap-1.5 text-xs text-indigo-600 mb-2 font-semibold">
-                          <Bot className="w-3.5 h-3.5" /> Umpan Balik AI
+              <AnimatePresence>
+                {selectedEntry?.id === e.id && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden border-t border-border"
+                  >
+                    <div className="p-5 space-y-3">
+                      <div>
+                        <p className="text-xs font-bold text-muted-foreground mb-1 uppercase tracking-wider">Refleksi Lengkap</p>
+                        <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{e.content}</p>
+                      </div>
+                      {e.ai_feedback && (
+                        <div className="bg-violet-50 rounded-xl border border-violet-200 p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Brain className="w-3.5 h-3.5 text-violet-500" />
+                            <p className="text-xs font-bold text-violet-700">Umpan Balik AI Reflective Mentor</p>
+                          </div>
+                          <p className="text-xs text-violet-800 leading-relaxed whitespace-pre-line">{e.ai_feedback}</p>
                         </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">{j.ai_feedback}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
-
-                {!expandedId && j.ai_feedback && (
-                  <div className="mt-3 pt-3 border-t border-border">
-                    <div className="flex items-center gap-1 text-xs text-indigo-600 font-medium">
-                      <Bot className="w-3 h-3" /> Ada umpan balik AI
+                      )}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </motion.div>
-            );
-          })}
-        </div>
-      )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 }
