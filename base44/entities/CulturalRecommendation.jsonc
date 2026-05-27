@@ -1,0 +1,60 @@
+{
+  "name": "CulturalRecommendation",
+  "type": "object",
+  "properties": {
+    "budaya": {
+      "type": "string",
+      "enum": [
+        "tolaki",
+        "mekongga",
+        "muna",
+        "buton"
+      ]
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "toxicity",
+        "impoliteness",
+        "aggression",
+        "disrespect",
+        "general"
+      ]
+    },
+    "nilai_komunikasi": {
+      "type": "string"
+    },
+    "etika_berbahasa": {
+      "type": "string"
+    },
+    "prinsip_kesantunan": {
+      "type": "string"
+    },
+    "contoh_komunikasi_buruk": {
+      "type": "string"
+    },
+    "contoh_komunikasi_baik": {
+      "type": "string"
+    },
+    "rekomendasi_etis": {
+      "type": "string"
+    },
+    "larangan_komunikasi": {
+      "type": "string"
+    },
+    "konteks_sosial_budaya": {
+      "type": "string"
+    },
+    "peribahasa": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "budaya",
+    "rekomendasi_etis"
+  ]
+}

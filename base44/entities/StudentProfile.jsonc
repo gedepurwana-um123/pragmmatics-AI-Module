@@ -1,0 +1,109 @@
+{
+  "name": "StudentProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email pengguna (relasi ke User)"
+    },
+    "institution": {
+      "type": "string",
+      "description": "Institusi/universitas"
+    },
+    "study_program": {
+      "type": "string",
+      "description": "Program studi"
+    },
+    "phone_number": {
+      "type": "string"
+    },
+    "profile_photo_url": {
+      "type": "string"
+    },
+    "academic_year": {
+      "type": "string"
+    },
+    "semester": {
+      "type": "number"
+    },
+    "student_id": {
+      "type": "string",
+      "description": "NIM"
+    },
+    "pragmatic_competence": {
+      "type": "number",
+      "description": "Skor 0-100"
+    },
+    "politeness_score": {
+      "type": "number",
+      "description": "Skor kesantunan 0-100"
+    },
+    "toxicity_baseline": {
+      "type": "number",
+      "description": "Baseline toxicity awal 0-100"
+    },
+    "toxicity_current": {
+      "type": "number",
+      "description": "Toxicity saat ini 0-100"
+    },
+    "cultural_sensitivity": {
+      "type": "number",
+      "description": "Sensitivitas budaya 0-100"
+    },
+    "ethical_awareness": {
+      "type": "number",
+      "description": "Kesadaran etika 0-100"
+    },
+    "pragmatic_maturity": {
+      "type": "number",
+      "description": "Kematangan pragmatik 0-100"
+    },
+    "emotional_control": {
+      "type": "number",
+      "description": "Kendali emosi 0-100"
+    },
+    "xp_points": {
+      "type": "number",
+      "description": "Experience points total",
+      "default": 0
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "Pemula",
+        "Perunggu",
+        "Perak",
+        "Emas",
+        "Platinum",
+        "Master"
+      ],
+      "default": "Pemula"
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0
+    },
+    "total_ai_interactions": {
+      "type": "number",
+      "default": 0
+    },
+    "total_modules_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "total_reflections": {
+      "type": "number",
+      "default": 0
+    },
+    "last_active": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "class_group": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

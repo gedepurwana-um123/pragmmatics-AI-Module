@@ -23,6 +23,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Settings from './pages/Settings';
 import LearningEcosystem from './pages/LearningEcosystem';
 import CulturalWisdom from './pages/CulturalWisdom';
+import Notifications from './pages/Notifications';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 
 // After login redirect, send user to correct dashboard based on role intent
@@ -88,6 +89,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/learning-ecosystem" element={<LearningEcosystem />} />
         <Route path="/cultural-wisdom" element={<CulturalWisdom />} />
+        <Route path="/notifications" element={<Notifications />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

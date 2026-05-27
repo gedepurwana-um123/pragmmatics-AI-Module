@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LayoutDashboard, BookOpen, Bot, MessageSquare, BarChart3,
+  LayoutDashboard, BookOpen, Bot, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
-  ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe
+  ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell
 } from 'lucide-react';
 
 const menuItems = [
@@ -18,6 +18,7 @@ const menuItems = [
   { icon: Library, label: 'Perpustakaan Kasus', path: '/ethnography', group: 'Analitik' },
   { icon: TrendingUp, label: 'Analitik', path: '/analytics', group: 'Analitik' },
   { icon: Award, label: 'Pencapaian', path: '/achievements', group: 'Analitik' },
+  { icon: Bell, label: 'Notifikasi', path: '/notifications', group: null },
   { icon: Settings, label: 'Pengaturan', path: '/settings', group: null },
 ];
 

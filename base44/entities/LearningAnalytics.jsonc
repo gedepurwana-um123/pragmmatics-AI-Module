@@ -1,0 +1,58 @@
+{
+  "name": "LearningAnalytics",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "session_duration_minutes": {
+      "type": "number"
+    },
+    "modules_accessed": {
+      "type": "number"
+    },
+    "ai_interactions": {
+      "type": "number"
+    },
+    "reflections_written": {
+      "type": "number"
+    },
+    "pragmatic_score": {
+      "type": "number"
+    },
+    "politeness_score": {
+      "type": "number"
+    },
+    "toxicity_score": {
+      "type": "number"
+    },
+    "cultural_sensitivity": {
+      "type": "number"
+    },
+    "ethical_awareness": {
+      "type": "number"
+    },
+    "quiz_attempts": {
+      "type": "number"
+    },
+    "quiz_avg_score": {
+      "type": "number"
+    },
+    "engagement_score": {
+      "type": "number",
+      "description": "Skor keterlibatan 0-100"
+    },
+    "learning_phase": {
+      "type": "string",
+      "description": "Fase skenario pembelajaran aktif"
+    }
+  },
+  "required": [
+    "user_email",
+    "date"
+  ]
+}

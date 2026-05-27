@@ -1,0 +1,95 @@
+{
+  "name": "AIChatLog",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "user_prompt": {
+      "type": "string",
+      "description": "Pesan pengguna"
+    },
+    "ai_response": {
+      "type": "string",
+      "description": "Respons AI"
+    },
+    "toxicity_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "politeness_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "speech_act": {
+      "type": "string",
+      "enum": [
+        "asertif",
+        "direktif",
+        "komisif",
+        "ekspresif",
+        "deklaratif",
+        "tidak_terklasifikasi"
+      ]
+    },
+    "emotional_tone": {
+      "type": "string",
+      "enum": [
+        "positif",
+        "netral",
+        "negatif",
+        "agresif",
+        "empatik"
+      ]
+    },
+    "cultural_recommendation": {
+      "type": "string",
+      "description": "Rekomendasi budaya lokal"
+    },
+    "scaffolding_level": {
+      "type": "string",
+      "enum": [
+        "minimal",
+        "moderat",
+        "intensif"
+      ]
+    },
+    "ethical_level": {
+      "type": "string",
+      "enum": [
+        "Sangat Baik",
+        "Baik",
+        "Cukup",
+        "Perlu Perbaikan"
+      ]
+    },
+    "reconstructed_text": {
+      "type": "string"
+    },
+    "module_context": {
+      "type": "string"
+    },
+    "interaction_type": {
+      "type": "string",
+      "enum": [
+        "analisis",
+        "simulasi",
+        "refleksi",
+        "tanya_jawab",
+        "scaffolding"
+      ]
+    },
+    "flagged_for_review": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email",
+    "user_prompt",
+    "ai_response"
+  ]
+}
