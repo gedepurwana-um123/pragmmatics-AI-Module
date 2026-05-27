@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
 // Page imports
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import AIAnalyzer from './pages/AIAnalyzer';
@@ -20,6 +22,28 @@ import LecturerDashboard from './pages/LecturerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Settings from './pages/Settings';
 import DashboardLayout from './components/dashboard/DashboardLayout';
+
+// After login redirect, send user to correct dashboard based on role intent
+const RoleRedirect = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+
+  useEffect(() => {
+    if (!isLoadingAuth && isAuthenticated) {
+      const intent = sessionStorage.getItem('login_role_intent');
+      if (intent) {
+        sessionStorage.removeItem('login_role_intent');
+        if (intent === 'dosen') {
+          navigate('/lecturer', { replace: true });
+          return;
+        }
+      }
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isLoadingAuth, navigate]);
+
+  return null;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +71,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/role-redirect" element={<RoleRedirect />} />
       <Route element={<DashboardLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/ai-analyzer" element={<AIAnalyzer />} />
