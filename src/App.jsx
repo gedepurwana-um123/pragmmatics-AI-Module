@@ -36,14 +36,12 @@ const RoleRedirect = () => {
   useEffect(() => {
     if (!isLoadingAuth && isAuthenticated) {
       const intent = sessionStorage.getItem('login_role_intent');
-      if (intent) {
-        sessionStorage.removeItem('login_role_intent');
-        if (intent === 'dosen') {
-          navigate('/lecturer', { replace: true });
-          return;
-        }
+      sessionStorage.removeItem('login_role_intent');
+      if (intent === 'dosen') {
+        navigate('/lecturer', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
       }
-      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 

@@ -10,15 +10,13 @@ export default function LoginModal({ isOpen, onClose }) {
   const handleLogin = () => {
     if (!selected) return;
     sessionStorage.setItem('login_role_intent', selected);
-    // Use absolute URL with current origin for OAuth redirect
-    const redirectUrl = `${window.location.origin}/role-redirect`;
-    base44.auth.redirectToLogin(redirectUrl);
+    // Let Base44 SDK handle OAuth redirect without custom URL
+    // (custom redirect URLs cause Google 403 if not registered)
+    base44.auth.redirectToLogin();
   };
 
   const handleDirectLogin = () => {
-    // Direct login without role selection (fallback)
-    const redirectUrl = `${window.location.origin}/role-redirect`;
-    base44.auth.redirectToLogin(redirectUrl);
+    base44.auth.redirectToLogin();
   };
 
   if (!isOpen) return null;
