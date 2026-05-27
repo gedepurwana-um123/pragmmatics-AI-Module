@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ArrowRight, Bot, Shield, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import InfoWidget from './InfoWidget';
 
 const stats = [
   { icon: Shield, label: 'Kesantunan Bahasa', value: '94%', color: 'text-emerald-600' },
@@ -12,29 +13,40 @@ const stats = [
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden pt-32">
+    <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 overflow-hidden pt-36">
       {/* Gradient orbs */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/15 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-[140px] animate-pulse" />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 max-w-5xl mx-auto text-center w-full">
+
+        {/* ── Info Widget ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-10 overflow-x-auto"
+        >
+          <InfoWidget />
+        </motion.div>
+
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200 mb-8"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-200 mb-6"
         >
           <Sparkles className="w-4 h-4 text-indigo-500" />
           <span className="text-sm font-semibold text-indigo-600">Platform Pragmatik Digital · AI-Powered</span>
         </motion.div>
 
-        {/* Headline — ringkas & bervariasi warna */}
+        {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold font-montserrat leading-tight mb-6"
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold font-montserrat leading-tight mb-5"
         >
           <span className="text-foreground">Kuasai </span>
           <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
@@ -51,7 +63,7 @@ export default function HeroSection() {
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
           className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Ekosistem pembelajaran pragmatik berbasis AI untuk meningkatkan kompetensi 
@@ -62,8 +74,8 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-wrap items-center justify-center gap-4 mb-16"
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="flex flex-wrap items-center justify-center gap-4 mb-14"
         >
           <Link to="/dashboard">
             <Button size="lg" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white px-8 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
@@ -89,7 +101,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="flex flex-wrap items-center justify-center gap-6"
+          className="flex flex-wrap items-center justify-center gap-5"
         >
           {stats.map((s, i) => (
             <div key={i} className="flex items-center gap-2 bg-white border border-border rounded-2xl px-5 py-3 shadow-sm">
