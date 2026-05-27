@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { localUser } from '@/lib/localUser';
 import { useNavigate } from 'react-router-dom';
 
-export default function LoginModal({ onClose }) {
+export default function LoginModal({ isOpen, onClose }) {
   const navigate = useNavigate();
   const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
@@ -13,6 +13,8 @@ export default function LoginModal({ onClose }) {
   const [institution, setInstitution] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleLogin = async (e) => {
     e.preventDefault();
