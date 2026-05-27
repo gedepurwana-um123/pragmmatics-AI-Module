@@ -27,6 +27,9 @@ import Notifications from './pages/Notifications';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import GroupChallenge from './pages/GroupChallenge';
 import CaseLibrary from './pages/CaseLibrary';
+import Community from './pages/Community';
+import AdaptiveLearning from './pages/AdaptiveLearning';
+import WeeklyReport from './pages/WeeklyReport';
 
 // After login redirect, send user to correct dashboard based on role intent
 const RoleRedirect = () => {
@@ -92,6 +95,9 @@ const AuthenticatedApp = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/group-challenge" element={<GroupChallenge />} />
         <Route path="/case-library" element={<CaseLibrary />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/adaptive-learning" element={<AdaptiveLearning />} />
+        <Route path="/weekly-report" element={<WeeklyReport />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

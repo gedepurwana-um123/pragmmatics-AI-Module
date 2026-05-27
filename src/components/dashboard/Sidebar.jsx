@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, BookOpen, Bot, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
-  ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell, Swords, BookMarked
+  ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
+  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2
 } from 'lucide-react';
 
 const menuItems = [
@@ -15,10 +16,13 @@ const menuItems = [
   { icon: Bot, label: 'Asisten AI', path: '/ai-analyzer', group: 'Belajar' },
   { icon: FlaskConical, label: 'Lab Media Sosial', path: '/social-lab', group: 'Belajar' },
   { icon: PenLine, label: 'Jurnal Reflektif', path: '/journal', group: 'Belajar' },
+  { icon: Lightbulb, label: 'Belajar Adaptif', path: '/adaptive-learning', group: 'Belajar' },
+  { icon: MessageSquare, label: 'Forum Komunitas', path: '/community', group: 'Kolaborasi' },
   { icon: Swords, label: 'Tantangan Kelompok', path: '/group-challenge', group: 'Kolaborasi' },
   { icon: BookMarked, label: 'Perpustakaan Kasus', path: '/case-library', group: 'Kolaborasi' },
   { icon: Library, label: 'Kasus Etnografi', path: '/ethnography', group: 'Analitik' },
   { icon: TrendingUp, label: 'Analitik', path: '/analytics', group: 'Analitik' },
+  { icon: BarChart2, label: 'Laporan Mingguan', path: '/weekly-report', group: 'Analitik' },
   { icon: Award, label: 'Pencapaian', path: '/achievements', group: 'Analitik' },
   { icon: Bell, label: 'Notifikasi', path: '/notifications', group: null },
   { icon: Settings, label: 'Pengaturan', path: '/settings', group: null },
