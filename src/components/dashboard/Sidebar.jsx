@@ -5,12 +5,17 @@ import {
   LayoutDashboard, BookOpen, Bot, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
-  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database
+  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database,
+  Building2, Key
 } from 'lucide-react';
 import { localUser } from '@/lib/localUser';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
+  { icon: Building2, label: 'Manajemen Institusi', path: '/institution-setup', group: 'Administrasi', adminOnly: true },
+  { icon: BookMarked, label: 'Manajemen Kelas', path: '/class-management', group: 'Administrasi', dosenOnly: true },
+  { icon: BarChart3, label: 'Analitik Kelas', path: '/lecturer-analytics', group: 'Administrasi', dosenOnly: true },
+  { icon: Key, label: 'Bergabung Kelas', path: '/join-class', group: 'Administrasi', studentOnly: true },
   { icon: Layers, label: 'Skenario Belajar', path: '/learning-ecosystem', group: 'Ekosistem' },
   { icon: Globe, label: 'Kearifan Budaya AI', path: '/cultural-wisdom', group: 'Ekosistem' },
   { icon: BookOpen, label: 'Modul Saya', path: '/modules', group: 'Belajar' },
@@ -72,9 +77,15 @@ export default function Sidebar() {
 
       {/* Menu */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {menuItems.map((item, idx) => {
+        {menuItems.filter(item => {
+          if (item.adminOnly && currentUser?.role !== 'admin') return false;
+          if (item.dosenOnly && currentUser?.role !== 'dosen') return false;
+          if (item.studentOnly && currentUser?.role === 'dosen') return false;
+          if (item.studentOnly && currentUser?.role === 'admin') return false;
+          return true;
+        }).map((item, idx, arr) => {
           const isActive = location.pathname === item.path;
-          const prevGroup = menuItems[idx - 1]?.group;
+          const prevGroup = arr[idx - 1]?.group;
           const showGroupLabel = !collapsed && item.group && item.group !== prevGroup;
           return (
             <React.Fragment key={item.path + item.label}>

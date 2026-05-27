@@ -1,0 +1,31 @@
+{
+  "name": "Faculty",
+  "type": "object",
+  "properties": {
+    "institution_id": {
+      "type": "string",
+      "description": "ID institusi"
+    },
+    "faculty_name": {
+      "type": "string",
+      "description": "Nama fakultas"
+    },
+    "faculty_code": {
+      "type": "string",
+      "description": "Kode fakultas"
+    },
+    "dean_name": {
+      "type": "string",
+      "description": "Nama dekan"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "institution_id",
+    "faculty_name",
+    "faculty_code"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "PragmaticScore",
+  "type": "object",
+  "properties": {
+    "student_email": {
+      "type": "string"
+    },
+    "class_id": {
+      "type": "string"
+    },
+    "lecturer_email": {
+      "type": "string"
+    },
+    "course_id": {
+      "type": "string"
+    },
+    "institution_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "pragmatic_competence": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "politeness_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "toxicity_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "cultural_sensitivity": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "ethical_awareness": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "emotional_control": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "empathy_score": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "speech_act_accuracy": {
+      "type": "number",
+      "description": "0-100"
+    },
+    "session_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "student_email",
+    "class_id",
+    "date"
+  ]
+}

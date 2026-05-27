@@ -1,0 +1,34 @@
+{
+  "name": "Institution",
+  "type": "object",
+  "properties": {
+    "institution_name": {
+      "type": "string",
+      "description": "Nama institusi/universitas"
+    },
+    "institution_code": {
+      "type": "string",
+      "description": "Kode institusi"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL logo institusi"
+    },
+    "address": {
+      "type": "string",
+      "description": "Alamat institusi"
+    },
+    "email_domain": {
+      "type": "string",
+      "description": "Domain email institusi (contoh: univ.ac.id)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "institution_name",
+    "institution_code"
+  ]
+}

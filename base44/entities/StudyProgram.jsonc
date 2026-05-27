@@ -1,0 +1,41 @@
+{
+  "name": "StudyProgram",
+  "type": "object",
+  "properties": {
+    "faculty_id": {
+      "type": "string",
+      "description": "ID fakultas"
+    },
+    "institution_id": {
+      "type": "string",
+      "description": "ID institusi"
+    },
+    "program_name": {
+      "type": "string",
+      "description": "Nama program studi"
+    },
+    "program_code": {
+      "type": "string",
+      "description": "Kode program studi"
+    },
+    "degree_level": {
+      "type": "string",
+      "enum": [
+        "D3",
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "default": "S1"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "faculty_id",
+    "program_name",
+    "program_code"
+  ]
+}

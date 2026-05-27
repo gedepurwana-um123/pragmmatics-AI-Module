@@ -35,6 +35,10 @@ import VirtualRoleplayLab from './pages/VirtualRoleplayLab';
 import EthnographyCaseLibrary from './pages/EthnographyCaseLibrary';
 import StudyGroupCollaboration from './pages/StudyGroupCollaboration';
 import PragmaticCulturalTour from './pages/PragmaticCulturalTour';
+import InstitutionSetup from './pages/InstitutionSetup';
+import ClassManagement from './pages/ClassManagement';
+import JoinClass from './pages/JoinClass';
+import LecturerAnalyticsDashboard from './pages/LecturerAnalyticsDashboard';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -76,6 +80,10 @@ const AuthenticatedApp = () => {
         <Route path="/ethnography-case-library" element={<EthnographyCaseLibrary />} />
         <Route path="/study-group" element={<StudyGroupCollaboration />} />
         <Route path="/pragmatic-cultural-tour" element={<PragmaticCulturalTour />} />
+        <Route path="/institution-setup" element={<InstitutionSetup />} />
+        <Route path="/class-management" element={<ClassManagement />} />
+        <Route path="/join-class" element={<JoinClass />} />
+        <Route path="/lecturer-analytics" element={<LecturerAnalyticsDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

@@ -1,0 +1,52 @@
+{
+  "name": "Course",
+  "type": "object",
+  "properties": {
+    "lecturer_id": {
+      "type": "string",
+      "description": "Email dosen pengampu"
+    },
+    "institution_id": {
+      "type": "string"
+    },
+    "faculty_id": {
+      "type": "string"
+    },
+    "study_program_id": {
+      "type": "string"
+    },
+    "course_name": {
+      "type": "string",
+      "description": "Nama mata kuliah"
+    },
+    "course_code": {
+      "type": "string",
+      "description": "Kode mata kuliah"
+    },
+    "credits": {
+      "type": "number",
+      "description": "SKS",
+      "default": 3
+    },
+    "semester": {
+      "type": "string",
+      "description": "Semester (Ganjil/Genap)"
+    },
+    "academic_year": {
+      "type": "string",
+      "description": "Tahun ajaran (2024/2025)"
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "lecturer_id",
+    "course_name",
+    "course_code"
+  ]
+}

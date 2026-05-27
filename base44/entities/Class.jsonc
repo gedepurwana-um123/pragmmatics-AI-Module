@@ -1,0 +1,59 @@
+{
+  "name": "Class",
+  "type": "object",
+  "properties": {
+    "course_id": {
+      "type": "string",
+      "description": "ID mata kuliah"
+    },
+    "lecturer_email": {
+      "type": "string",
+      "description": "Email dosen"
+    },
+    "institution_id": {
+      "type": "string"
+    },
+    "class_name": {
+      "type": "string",
+      "description": "Nama kelas (Kelas A, Kelas B)"
+    },
+    "class_code": {
+      "type": "string",
+      "description": "Kode unik untuk join kelas"
+    },
+    "semester": {
+      "type": "string"
+    },
+    "academic_year": {
+      "type": "string"
+    },
+    "max_students": {
+      "type": "number",
+      "default": 40
+    },
+    "enrolled_count": {
+      "type": "number",
+      "default": 0
+    },
+    "schedule": {
+      "type": "string",
+      "description": "Jadwal kelas"
+    },
+    "room": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "course_id",
+    "lecturer_email",
+    "class_name",
+    "class_code"
+  ]
+}

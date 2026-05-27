@@ -1,0 +1,65 @@
+{
+  "name": "Enrollment",
+  "type": "object",
+  "properties": {
+    "class_id": {
+      "type": "string",
+      "description": "ID kelas"
+    },
+    "student_email": {
+      "type": "string",
+      "description": "Email mahasiswa"
+    },
+    "lecturer_email": {
+      "type": "string",
+      "description": "Email dosen (denormalisasi)"
+    },
+    "course_id": {
+      "type": "string",
+      "description": "ID mata kuliah (denormalisasi)"
+    },
+    "institution_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "pending",
+        "dropped",
+        "completed"
+      ],
+      "default": "active"
+    },
+    "joined_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "final_pragmatic_score": {
+      "type": "number"
+    },
+    "final_politeness_score": {
+      "type": "number"
+    },
+    "final_toxicity_score": {
+      "type": "number"
+    },
+    "total_ai_interactions": {
+      "type": "number",
+      "default": 0
+    },
+    "total_reflections": {
+      "type": "number",
+      "default": 0
+    },
+    "completion_percentage": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "class_id",
+    "student_email",
+    "lecturer_email"
+  ]
+}

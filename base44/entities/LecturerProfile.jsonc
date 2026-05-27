@@ -1,0 +1,60 @@
+{
+  "name": "LecturerProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email pengguna (relasi ke User)"
+    },
+    "institution_id": {
+      "type": "string",
+      "description": "ID institusi"
+    },
+    "faculty_id": {
+      "type": "string",
+      "description": "ID fakultas"
+    },
+    "study_program_id": {
+      "type": "string",
+      "description": "ID program studi"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "lecturer_code": {
+      "type": "string",
+      "description": "NIDN/kode dosen"
+    },
+    "profile_photo_url": {
+      "type": "string"
+    },
+    "specialization": {
+      "type": "string",
+      "description": "Bidang keahlian"
+    },
+    "academic_title": {
+      "type": "string",
+      "description": "Gelar akademik (Dr., Prof., dll)"
+    },
+    "phone_number": {
+      "type": "string"
+    },
+    "total_classes": {
+      "type": "number",
+      "default": 0
+    },
+    "total_students": {
+      "type": "number",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "user_email",
+    "institution_id",
+    "full_name"
+  ]
+}
