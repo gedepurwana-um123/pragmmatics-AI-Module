@@ -1,147 +1,139 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, GraduationCap, BookOpen, Brain, ArrowRight } from 'lucide-react';
+import { X, Brain, GraduationCap, BookOpen, Mail, User, Building2, LogIn, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
+import { localUser } from '@/lib/localUser';
+import { useNavigate } from 'react-router-dom';
 
-export default function LoginModal({ isOpen, onClose }) {
-  const [selected, setSelected] = useState(null); // 'mahasiswa' | 'dosen'
+export default function LoginModal({ onClose }) {
+  const navigate = useNavigate();
+  const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [institution, setInstitution] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (role) => {
-    const chosenRole = role || selected;
-    if (chosenRole) {
-      sessionStorage.setItem('login_role_intent', chosenRole);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!role) { setError('Pilih peran Anda terlebih dahulu.'); return; }
+    if (!email.trim() || !email.includes('@')) { setError('Masukkan alamat email yang valid.'); return; }
+    if (!fullName.trim()) { setError('Masukkan nama lengkap Anda.'); return; }
+    if (!institution.trim()) { setError('Masukkan nama institusi/kampus Anda.'); return; }
+
+    setLoading(true);
+    await new Promise(r => setTimeout(r, 500));
+    localUser.set({ email: email.trim().toLowerCase(), full_name: fullName.trim(), institution: institution.trim(), role });
+    onClose?.();
+    if (role === 'dosen') {
+      navigate('/lecturer');
+    } else {
+      navigate('/dashboard');
     }
-    base44.auth.redirectToLogin();
+    setLoading(false);
   };
-
-  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        onClick={(e) => e.target === e.currentTarget && onClose?.()}
+      >
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={onClose}
-        />
-
-        {/* Modal */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 z-10"
+          exit={{ opacity: 0, scale: 0.92, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden"
         >
-          {/* Close */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-secondary flex items-center justify-center hover:bg-secondary/80 transition-colors"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
-
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center mx-auto mb-4">
-              <Brain className="w-7 h-7 text-white" />
+          <div className="bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-600 p-6 text-white relative">
+            <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-bold text-lg font-montserrat">PragmaticsAI</h2>
+                <p className="text-white/70 text-xs">Platform Pragmatik Digital</p>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold font-montserrat text-foreground">Masuk ke PragmaticsAI</h2>
-            <p className="text-sm text-muted-foreground mt-1">Pilih peran Anda untuk memulai</p>
+            <p className="text-white/80 text-sm mt-2">Masuk untuk mengakses ekosistem pembelajaran pragmatik berbasis AI.</p>
           </div>
 
-          {/* Role selector */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {/* Mahasiswa */}
-            <button
-              onClick={() => setSelected('mahasiswa')}
-              className={`group relative rounded-2xl p-5 border-2 text-left transition-all duration-200 ${
-                selected === 'mahasiswa'
-                  ? 'border-primary bg-primary/5 shadow-md'
-                  : 'border-border bg-secondary/30 hover:border-primary/40 hover:bg-primary/3'
-              }`}
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all ${
-                selected === 'mahasiswa'
-                  ? 'bg-gradient-to-br from-indigo-500 to-purple-600'
-                  : 'bg-secondary group-hover:bg-primary/10'
-              }`}>
-                <GraduationCap className={`w-5 h-5 ${selected === 'mahasiswa' ? 'text-white' : 'text-muted-foreground group-hover:text-primary'}`} />
+          {/* Form */}
+          <form onSubmit={handleLogin} className="p-6 space-y-4">
+            {/* Role selector */}
+            <div>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-2">Saya adalah:</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button type="button" onClick={() => setRole('mahasiswa')}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${role === 'mahasiswa' ? 'border-indigo-500 bg-indigo-50' : 'border-border hover:border-indigo-200'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${role === 'mahasiswa' ? 'bg-indigo-100' : 'bg-secondary'}`}>
+                    <GraduationCap className={`w-5 h-5 ${role === 'mahasiswa' ? 'text-indigo-600' : 'text-muted-foreground'}`} />
+                  </div>
+                  <div className="text-center">
+                    <p className={`text-sm font-bold ${role === 'mahasiswa' ? 'text-indigo-700' : 'text-foreground'}`}>Mahasiswa</p>
+                    <p className="text-[10px] text-muted-foreground">Akses modul belajar</p>
+                  </div>
+                </button>
+                <button type="button" onClick={() => setRole('dosen')}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${role === 'dosen' ? 'border-cyan-500 bg-cyan-50' : 'border-border hover:border-cyan-200'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${role === 'dosen' ? 'bg-cyan-100' : 'bg-secondary'}`}>
+                    <BookOpen className={`w-5 h-5 ${role === 'dosen' ? 'text-cyan-600' : 'text-muted-foreground'}`} />
+                  </div>
+                  <div className="text-center">
+                    <p className={`text-sm font-bold ${role === 'dosen' ? 'text-cyan-700' : 'text-foreground'}`}>Dosen</p>
+                    <p className="text-[10px] text-muted-foreground">Akses dasbor pengajar</p>
+                  </div>
+                </button>
               </div>
-              <h3 className={`font-semibold font-montserrat text-sm ${selected === 'mahasiswa' ? 'text-primary' : 'text-foreground'}`}>
-                Mahasiswa
-              </h3>
-              <p className="text-xs text-muted-foreground mt-1">Akses modul & latihan</p>
-              {selected === 'mahasiswa' && (
-                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-white" />
-                </div>
-              )}
-            </button>
+            </div>
 
-            {/* Dosen */}
-            <button
-              onClick={() => setSelected('dosen')}
-              className={`group relative rounded-2xl p-5 border-2 text-left transition-all duration-200 ${
-                selected === 'dosen'
-                  ? 'border-accent bg-accent/5 shadow-md'
-                  : 'border-border bg-secondary/30 hover:border-accent/40 hover:bg-accent/3'
-              }`}
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-all ${
-                selected === 'dosen'
-                  ? 'bg-gradient-to-br from-cyan-500 to-teal-600'
-                  : 'bg-secondary group-hover:bg-accent/10'
-              }`}>
-                <BookOpen className={`w-5 h-5 ${selected === 'dosen' ? 'text-white' : 'text-muted-foreground group-hover:text-accent'}`} />
+            {/* Fields */}
+            <div className="space-y-3">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder="Alamat Email"
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-secondary/20" />
               </div>
-              <h3 className={`font-semibold font-montserrat text-sm ${selected === 'dosen' ? 'text-accent' : 'text-foreground'}`}>
-                Dosen
-              </h3>
-              <p className="text-xs text-muted-foreground mt-1">Pantau & kelola kelas</p>
-              {selected === 'dosen' && (
-                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-accent flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-white" />
-                </div>
-              )}
-            </button>
-          </div>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
+                  placeholder="Nama Lengkap"
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-secondary/20" />
+              </div>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input type="text" value={institution} onChange={e => setInstitution(e.target.value)}
+                  placeholder="Nama Institusi / Kampus"
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-secondary/20" />
+              </div>
+            </div>
 
-          {/* Login button */}
-          <Button
-            onClick={() => handleLogin()}
-            disabled={!selected}
-            className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white disabled:opacity-40 transition-all"
-          >
-            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            {selected
-              ? `Masuk sebagai ${selected === 'mahasiswa' ? 'Mahasiswa' : 'Dosen'}`
-              : 'Pilih peran terlebih dahulu'}
-            {selected && <ArrowRight className="w-4 h-4 ml-2" />}
-          </Button>
+            {error && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />{error}
+              </div>
+            )}
 
-          <p className="text-xs text-center text-muted-foreground mt-4">
-            Login menggunakan akun Google Anda. Aman & terenkripsi.
-          </p>
-
-          <div className="mt-3 pt-3 border-t border-border">
-            <button onClick={() => handleLogin(null)}
-              className="w-full text-xs text-muted-foreground hover:text-primary transition-colors py-1"
-            >
-              Atau masuk langsung tanpa memilih peran →
-            </button>
-          </div>
+            <Button type="submit" disabled={loading}
+              className="w-full h-12 rounded-xl text-base font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white gap-2">
+              {loading
+                ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Masuk...</>
+                : <><LogIn className="w-4 h-4" />Masuk ke PragmaticsAI</>}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">Data disimpan di perangkat Anda secara lokal dan aman.</p>
+          </form>
         </motion.div>
-      </div>
+      </motion.div>
     </AnimatePresence>
   );
 }

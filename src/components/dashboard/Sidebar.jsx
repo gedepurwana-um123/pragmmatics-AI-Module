@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, BookOpen, Bot, BarChart3,
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
-  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater
+  Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database
 } from 'lucide-react';
+import { localUser } from '@/lib/localUser';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
@@ -19,6 +20,7 @@ const menuItems = [
   { icon: Lightbulb, label: 'Belajar Adaptif', path: '/adaptive-learning', group: 'Belajar' },
   { icon: Mic, label: 'AI Pragmatics Tutor', path: '/ai-pragmatics-tutor', group: 'Belajar' },
   { icon: Theater, label: 'Virtual Roleplay Lab', path: '/virtual-roleplay-lab', group: 'Belajar' },
+  { icon: Database, label: 'Perpustakaan Etnografi', path: '/ethnography-case-library', group: 'Belajar' },
   { icon: MessageSquare, label: 'Forum Komunitas', path: '/community', group: 'Kolaborasi' },
   { icon: Swords, label: 'Tantangan Kelompok', path: '/group-challenge', group: 'Kolaborasi' },
   { icon: BookMarked, label: 'Perpustakaan Kasus', path: '/case-library', group: 'Kolaborasi' },
@@ -33,7 +35,20 @@ const menuItems = [
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => localUser.get());
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const iv = setInterval(() => setCurrentUser(localUser.get()), 500);
+    return () => clearInterval(iv);
+  }, []);
+
+  const handleLogout = () => {
+    localUser.clear();
+    setCurrentUser(null);
+    navigate('/');
+  };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -86,15 +101,20 @@ export default function Sidebar() {
 
       {/* User */}
       <div className="p-4 border-t border-border/20">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
-            <Users className="w-4 h-4 text-white" />
+        <div className="flex items-center gap-2">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${currentUser?.role === 'dosen' ? 'bg-gradient-to-br from-cyan-500 to-teal-600' : 'bg-gradient-to-br from-primary to-accent'}`}>
+            {currentUser?.role === 'dosen' ? <BookOpen className="w-4 h-4 text-white" /> : <GraduationCap className="w-4 h-4 text-white" />}
           </div>
           {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-medium truncate">Mahasiswa</p>
-              <p className="text-xs text-muted-foreground truncate">Aktif</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold truncate">{currentUser?.full_name || 'Pengguna'}</p>
+              <p className="text-[10px] text-muted-foreground truncate capitalize">{currentUser?.role || 'mahasiswa'} · {currentUser?.institution || ''}</p>
             </div>
+          )}
+          {!collapsed && (
+            <button onClick={handleLogout} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-muted-foreground hover:text-rose-500 transition-colors flex-shrink-0" title="Keluar">
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
           )}
         </div>
       </div>
