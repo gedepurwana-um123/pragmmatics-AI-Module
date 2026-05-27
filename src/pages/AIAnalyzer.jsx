@@ -10,6 +10,7 @@ import {
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { base44 } from '@/api/base44Client';
 import { buildAnalysisPrompt, buildChatPrompt } from '@/lib/aiPrompts';
+import ToxicityAlert from '@/components/ToxicityAlert';
 
 const SCAFFOLDING_LEVELS = [
   { key: 'pemula', label: 'Pemula', color: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
@@ -161,7 +162,8 @@ export default function AIAnalyzer() {
             </div>
             <Textarea value={text} onChange={e => setText(e.target.value)}
               placeholder="Masukkan teks komunikasi digital (komentar, pesan, caption media sosial)..."
-              className="min-h-[110px] bg-secondary/30 border-border resize-none mb-4 text-sm" />
+              className="min-h-[110px] bg-secondary/30 border-border resize-none text-sm" />
+            <ToxicityAlert text={text} threshold={50} />
             <div className="flex gap-3 flex-wrap">
               <Button onClick={handleAnalyze} disabled={loading || !text.trim()}
                 className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl px-6">

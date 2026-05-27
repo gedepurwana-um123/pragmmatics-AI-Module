@@ -1,0 +1,78 @@
+{
+  "name": "CaseLibrary",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "twitter",
+        "tiktok",
+        "whatsapp",
+        "facebook",
+        "forum_online"
+      ]
+    },
+    "original_text": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "speech_act_category": {
+      "type": "string"
+    },
+    "ethnographic_annotation": {
+      "type": "string"
+    },
+    "ai_analysis": {
+      "type": "string"
+    },
+    "toxicity_score": {
+      "type": "number"
+    },
+    "politeness_score": {
+      "type": "number"
+    },
+    "cultural_category": {
+      "type": "string",
+      "enum": [
+        "tolaki",
+        "muna",
+        "buton",
+        "umum"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "mudah",
+        "sedang",
+        "sulit"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_anonymized": {
+      "type": "boolean",
+      "default": true
+    },
+    "student_analyses": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "original_text"
+  ]
+}

@@ -9,9 +9,15 @@ export default function LoginModal({ isOpen, onClose }) {
 
   const handleLogin = () => {
     if (!selected) return;
-    // Store role intent in sessionStorage so after redirect we can use it
     sessionStorage.setItem('login_role_intent', selected);
-    const redirectUrl = window.location.origin + '/role-redirect';
+    // Use absolute URL with current origin for OAuth redirect
+    const redirectUrl = `${window.location.origin}/role-redirect`;
+    base44.auth.redirectToLogin(redirectUrl);
+  };
+
+  const handleDirectLogin = () => {
+    // Direct login without role selection (fallback)
+    const redirectUrl = `${window.location.origin}/role-redirect`;
     base44.auth.redirectToLogin(redirectUrl);
   };
 
@@ -132,6 +138,14 @@ export default function LoginModal({ isOpen, onClose }) {
           <p className="text-xs text-center text-muted-foreground mt-4">
             Login menggunakan akun Google Anda. Aman & terenkripsi.
           </p>
+
+          <div className="mt-3 pt-3 border-t border-border">
+            <button onClick={handleDirectLogin}
+              className="w-full text-xs text-muted-foreground hover:text-primary transition-colors py-1"
+            >
+              Atau masuk langsung tanpa memilih peran →
+            </button>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>

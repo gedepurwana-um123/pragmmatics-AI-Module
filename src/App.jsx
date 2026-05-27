@@ -25,6 +25,8 @@ import LearningEcosystem from './pages/LearningEcosystem';
 import CulturalWisdom from './pages/CulturalWisdom';
 import Notifications from './pages/Notifications';
 import DashboardLayout from './components/dashboard/DashboardLayout';
+import GroupChallenge from './pages/GroupChallenge';
+import CaseLibrary from './pages/CaseLibrary';
 
 // After login redirect, send user to correct dashboard based on role intent
 const RoleRedirect = () => {
@@ -90,6 +92,8 @@ const AuthenticatedApp = () => {
         <Route path="/learning-ecosystem" element={<LearningEcosystem />} />
         <Route path="/cultural-wisdom" element={<CulturalWisdom />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/group-challenge" element={<GroupChallenge />} />
+        <Route path="/case-library" element={<CaseLibrary />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

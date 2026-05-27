@@ -1,0 +1,59 @@
+{
+  "name": "GroupChallenge",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "scenario": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "draft"
+      ],
+      "default": "active"
+    },
+    "group_name": {
+      "type": "string"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "avg_politeness": {
+      "type": "number"
+    },
+    "avg_effectiveness": {
+      "type": "number"
+    },
+    "cultural_score": {
+      "type": "number"
+    },
+    "ai_consensus": {
+      "type": "string"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "title",
+    "scenario"
+  ]
+}
