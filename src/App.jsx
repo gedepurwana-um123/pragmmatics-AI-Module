@@ -39,6 +39,7 @@ import InstitutionSetup from './pages/InstitutionSetup';
 import ClassManagement from './pages/ClassManagement';
 import JoinClass from './pages/JoinClass';
 import LecturerAnalyticsDashboard from './pages/LecturerAnalyticsDashboard';
+import CulturalCaseTraining from './pages/CulturalCaseTraining';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -84,6 +85,7 @@ const AuthenticatedApp = () => {
         <Route path="/class-management" element={<ClassManagement />} />
         <Route path="/join-class" element={<JoinClass />} />
         <Route path="/lecturer-analytics" element={<LecturerAnalyticsDashboard />} />
+        <Route path="/cultural-case-training" element={<CulturalCaseTraining />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

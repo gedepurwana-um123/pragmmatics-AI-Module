@@ -1,0 +1,47 @@
+{
+  "name": "CulturalCaseAttempt",
+  "type": "object",
+  "properties": {
+    "exercise_id": {
+      "type": "string",
+      "description": "ID latihan kasus budaya"
+    },
+    "student_email": {
+      "type": "string"
+    },
+    "class_id": {
+      "type": "string"
+    },
+    "selected_option_id": {
+      "type": "string",
+      "description": "ID opsi yang dipilih mahasiswa"
+    },
+    "is_correct": {
+      "type": "boolean"
+    },
+    "xp_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "ai_feedback": {
+      "type": "string",
+      "description": "Feedback AI untuk jawaban mahasiswa"
+    },
+    "ai_score": {
+      "type": "number",
+      "description": "Skor AI 0-100 untuk kualitas pilihan"
+    },
+    "time_spent_seconds": {
+      "type": "number"
+    },
+    "attempt_number": {
+      "type": "number",
+      "default": 1
+    }
+  },
+  "required": [
+    "exercise_id",
+    "student_email",
+    "selected_option_id"
+  ]
+}

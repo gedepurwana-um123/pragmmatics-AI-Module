@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import LearningProgressDashboard from '@/components/dashboard/LearningProgressDashboard';
 import GamificationPanel from '@/components/dashboard/GamificationPanel';
+import ClassLeaderboard from '@/components/dashboard/ClassLeaderboard';
 
 const progressData = [
   { day: 'Sen', kesantunan: 65, pragmatik: 60, toxicity: 40 },
@@ -49,6 +50,7 @@ const PHASES = [
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [enrollment, setEnrollment] = useState(null);
   const [greeting, setGreeting] = useState('Selamat datang');
 
   useEffect(() => {
@@ -64,6 +66,13 @@ export default function Dashboard() {
 
     base44.entities.StudentProfile.filter({}).then(p => {
       if (p?.length > 0) setProfile(p[0]);
+    }).catch(() => {});
+
+    base44.auth.me().then(u => {
+      if (!u) return;
+      base44.entities.Enrollment.filter({ student_email: u.email, status: 'active' }).then(enrs => {
+        if (enrs?.length > 0) setEnrollment(enrs[0]);
+      }).catch(() => {});
     }).catch(() => {});
   }, []);
 
@@ -226,6 +235,11 @@ export default function Dashboard() {
 
       {/* Gamification Panel */}
       <GamificationPanel />
+
+      {/* Leaderboard */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
+        <ClassLeaderboard classId={enrollment?.class_id} currentUserEmail={user?.email} />
+      </motion.div>
 
       {/* Quick actions + Modules */}
       <div className="grid lg:grid-cols-3 gap-6">

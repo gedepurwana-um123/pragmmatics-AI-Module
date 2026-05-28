@@ -1,0 +1,94 @@
+{
+  "name": "CulturalCaseExercise",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Judul latihan kasus"
+    },
+    "budaya": {
+      "type": "string",
+      "enum": [
+        "tolaki",
+        "buton",
+        "muna",
+        "mekongga",
+        "umum"
+      ],
+      "description": "Latar budaya skenario"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "mudah",
+        "sedang",
+        "sulit"
+      ],
+      "default": "sedang"
+    },
+    "scenario": {
+      "type": "string",
+      "description": "Narasi skenario dilema etika"
+    },
+    "context": {
+      "type": "string",
+      "description": "Konteks budaya dan sosial skenario"
+    },
+    "dilemma_question": {
+      "type": "string",
+      "description": "Pertanyaan dilema yang harus dijawab mahasiswa"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Pilihan respons komunikasi (A, B, C, D)"
+    },
+    "correct_option_id": {
+      "type": "string",
+      "description": "ID opsi terbaik menurut nilai budaya"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Penjelasan mengapa opsi tertentu terbaik"
+    },
+    "cultural_wisdom": {
+      "type": "string",
+      "description": "Nilai kearifan lokal yang relevan"
+    },
+    "xp_reward": {
+      "type": "number",
+      "default": 50,
+      "description": "Poin XP yang diberikan jika menjawab benar"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "budaya",
+    "scenario",
+    "dilemma_question",
+    "options"
+  ]
+}

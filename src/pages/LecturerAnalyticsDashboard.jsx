@@ -14,6 +14,7 @@ import { localUser } from '@/lib/localUser';
 import StudentAnalyticsTable from '@/components/lecturer/StudentAnalyticsTable';
 import ClassSelector from '@/components/lecturer/ClassSelector';
 import LecturerNotificationPanel from '@/components/lecturer/LecturerNotificationPanel';
+import ClassLeaderboard from '@/components/dashboard/ClassLeaderboard';
 
 const tooltipStyle = { backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px', fontSize: 12 };
 
@@ -216,9 +217,14 @@ export default function LecturerAnalyticsDashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="lg:col-span-2">
           <StudentAnalyticsTable enrollments={enrollments} onDownloadPDF={downloadStudentPDF} />
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <LecturerNotificationPanel classIds={classes.map(c => c.id)} />
-        </motion.div>
+        <div className="space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+            <LecturerNotificationPanel classIds={classes.map(c => c.id)} />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+            <ClassLeaderboard classId={selectedClass?.id} />
+          </motion.div>
+        </div>
       </div>
     </div>
   );
