@@ -97,6 +97,22 @@ Berikan analisis JSON lengkap.`,
         }
       }).catch(() => {});
 
+    // Notify lecturer if toxicity is high (>60)
+    if ((aiResult.toxicity_score || 0) > 60) {
+      const enrollments = await base44.entities.Enrollment.filter({ student_email: user.email, status: 'active' }).catch(() => []);
+      if (enrollments?.length > 0) {
+        const enr = enrollments[0];
+        await base44.entities.Notification.create({
+          recipient_email: enr.lecturer_email,
+          type: 'alert',
+          title: '⚠️ Toksisitas Tinggi Terdeteksi',
+          message: `Mahasiswa ${user.email} mendapatkan skor toksisitas ${aiResult.toxicity_score}% dalam interaksi AI. Pertimbangkan intervensi segera.`,
+          is_read: false,
+          sender_email: 'system@pragmaticsai',
+        }).catch(() => {});
+      }
+    }
+
     // Update student profile AI count
     await base44.entities.StudentProfile.filter({ user_email: user.email })
       .then(async (profiles) => {

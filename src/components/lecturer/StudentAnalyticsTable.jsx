@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Search, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Minus, FileText, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
-export default function StudentAnalyticsTable({ enrollments }) {
+export default function StudentAnalyticsTable({ enrollments, onDownloadPDF }) {
+  const [downloadingEmail, setDownloadingEmail] = useState(null);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('pragmatic');
 
@@ -63,11 +65,12 @@ export default function StudentAnalyticsTable({ enrollments }) {
               <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground">Refleksi</th>
               <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground">Selesai</th>
               <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
+              <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground">Laporan</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr><td colSpan={9} className="text-center py-10 text-muted-foreground text-sm">Belum ada data mahasiswa</td></tr>
+              <tr><td colSpan={10} className="text-center py-10 text-muted-foreground text-sm">Belum ada data mahasiswa</td></tr>
             ) : (
               filtered.map((enr, i) => (
                 <tr key={enr.id} className="border-b border-border/50 hover:bg-secondary/20 transition-colors">
@@ -113,7 +116,26 @@ export default function StudentAnalyticsTable({ enrollments }) {
                       {enr.status}
                     </span>
                   </td>
-                </tr>
+                  <td className="px-4 py-3.5 text-center">
+                    {onDownloadPDF && (
+                      <Button
+                        size="sm" variant="ghost"
+                        className="h-7 w-7 p-0 hover:bg-indigo-50 hover:text-indigo-600"
+                        disabled={downloadingEmail === enr.student_email}
+                        onClick={async () => {
+                          setDownloadingEmail(enr.student_email);
+                          await onDownloadPDF(enr.student_email);
+                          setDownloadingEmail(null);
+                        }}
+                        title="Unduh Laporan PDF"
+                      >
+                        {downloadingEmail === enr.student_email
+                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          : <FileText className="w-3.5 h-3.5" />}
+                      </Button>
+                    )}
+                  </td>
+                  </tr>
               ))
             )}
           </tbody>

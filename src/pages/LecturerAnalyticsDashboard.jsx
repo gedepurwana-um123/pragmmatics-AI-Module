@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import {
   Users, BarChart3, TrendingUp, Brain, Shield, AlertTriangle,
-  BookOpen, Download, RefreshCw, Eye, Filter
+  BookOpen, Download, RefreshCw, Eye, Filter, FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +13,7 @@ import {
 import { localUser } from '@/lib/localUser';
 import StudentAnalyticsTable from '@/components/lecturer/StudentAnalyticsTable';
 import ClassSelector from '@/components/lecturer/ClassSelector';
+import LecturerNotificationPanel from '@/components/lecturer/LecturerNotificationPanel';
 
 const tooltipStyle = { backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px', fontSize: 12 };
 
@@ -72,6 +73,29 @@ export default function LecturerAnalyticsDashboard() {
     { subject: 'Empati', value: 78 },
     { subject: 'Refleksi', value: enrollments.reduce((a, e) => a + (e.total_reflections || 0), 0) > 0 ? 80 : 50 },
   ];
+
+  const downloadStudentPDF = async (studentEmail) => {
+    const res = await base44.functions.invoke('generateStudentReport', {
+      student_email: studentEmail,
+      class_id: selectedClass?.id,
+    });
+    // res.data is parsed JSON - we need to trigger download differently
+    // Re-fetch as blob via fetch directly
+    const token = await base44.auth.getToken?.().catch(() => null);
+    const fetchRes = await fetch('/api/functions/generateStudentReport', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      body: JSON.stringify({ student_email: studentEmail, class_id: selectedClass?.id }),
+    });
+    if (fetchRes.ok) {
+      const blob = await fetchRes.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `laporan_${studentEmail.split('@')[0]}.pdf`;
+      a.click();
+    }
+  };
 
   const exportCSV = () => {
     const headers = ['Email', 'Skor Pragmatik', 'Kesantunan', 'Toxicity', 'Interaksi AI', 'Refleksi', 'Status'];
@@ -187,10 +211,15 @@ export default function LecturerAnalyticsDashboard() {
         </motion.div>
       </div>
 
-      {/* Student Table */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-        <StudentAnalyticsTable enrollments={enrollments} />
-      </motion.div>
+      {/* Notification Panel + Student Table */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="lg:col-span-2">
+          <StudentAnalyticsTable enrollments={enrollments} onDownloadPDF={downloadStudentPDF} />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <LecturerNotificationPanel classIds={classes.map(c => c.id)} />
+        </motion.div>
+      </div>
     </div>
   );
 }

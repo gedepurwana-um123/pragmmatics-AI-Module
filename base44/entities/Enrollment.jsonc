@@ -55,6 +55,38 @@
     "completion_percentage": {
       "type": "number",
       "default": 0
+    },
+    "xp_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Total poin pengalaman (XP)"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "Pemula",
+        "Perunggu",
+        "Perak",
+        "Emas",
+        "Platinum",
+        "Master"
+      ],
+      "default": "Pemula"
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Kode lencana yang diraih"
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date"
     }
   },
   "required": [

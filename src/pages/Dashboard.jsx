@@ -13,6 +13,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
 import LearningProgressDashboard from '@/components/dashboard/LearningProgressDashboard';
+import GamificationPanel from '@/components/dashboard/GamificationPanel';
 
 const progressData = [
   { day: 'Sen', kesantunan: 65, pragmatik: 60, toxicity: 40 },
@@ -222,6 +223,9 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
         <LearningProgressDashboard />
       </motion.div>
+
+      {/* Gamification Panel */}
+      <GamificationPanel />
 
       {/* Quick actions + Modules */}
       <div className="grid lg:grid-cols-3 gap-6">
