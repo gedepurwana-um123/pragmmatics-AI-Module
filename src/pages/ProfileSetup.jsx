@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { Brain, GraduationCap, BookOpen, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { userRole } from '@/lib/userRole';
 
 const ROLES = [
   {
@@ -32,45 +33,88 @@ export default function ProfileSetup() {
   const [user, setUser] = useState(null);
   const [selected, setSelected] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u) { base44.auth.redirectToLogin(); return; }
-      // Only skip setup if role is already one of the app-specific roles
+
+      // Cek apakah sudah punya role tersimpan di localStorage
+      const savedRole = userRole.get(u.email);
+      if (savedRole === 'mahasiswa') { navigate('/dashboard', { replace: true }); return; }
+      if (savedRole === 'dosen') { navigate('/dosen-dashboard', { replace: true }); return; }
+      if (savedRole === 'admin') { navigate('/admin-panel', { replace: true }); return; }
+
+      // Cek role dari Base44 (jika updateMe berhasil sebelumnya)
       if (u.role === 'mahasiswa') {
+        userRole.set(u.email, 'mahasiswa');
         navigate('/dashboard', { replace: true });
         return;
       }
       if (u.role === 'dosen') {
+        userRole.set(u.email, 'dosen');
         navigate('/dosen-dashboard', { replace: true });
         return;
       }
       if (u.role === 'admin') {
+        userRole.set(u.email, 'admin');
         navigate('/admin-panel', { replace: true });
         return;
       }
-      // role === 'user' (Base44 default) or unset → show role selection
+
+      // Role belum dipilih → tampilkan form pilihan
       setUser(u);
     }).catch(() => base44.auth.redirectToLogin());
   }, []);
 
   const handleContinue = async () => {
-    if (!selected || saving) return;
+    if (!selected || saving || !user) return;
     setSaving(true);
+    setError(null);
+
+    // 1. Simpan ke localStorage (ini yang utama & pasti berhasil)
+    userRole.set(user.email, selected);
+
+    // 2. Coba simpan ke Base44 User entity (mungkin berhasil, mungkin tidak)
     try {
       await base44.auth.updateMe({ role: selected });
-      // Small delay to ensure the update is reflected before redirect
-      await new Promise(r => setTimeout(r, 500));
-      if (selected === 'dosen') {
-        navigate('/dosen-dashboard', { replace: true });
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
-    } catch (err) {
-      console.error('Failed to save role:', err);
-      setSaving(false);
+    } catch (e) {
+      // Tidak masalah jika gagal, localStorage sudah tersimpan
+      console.warn('updateMe failed (non-critical):', e?.message);
     }
+
+    // 3. Buat profil sesuai peran
+    try {
+      if (selected === 'mahasiswa') {
+        const existing = await base44.entities.StudentProfile.filter({ user_email: user.email }).catch(() => []);
+        if (!existing || existing.length === 0) {
+          await base44.entities.StudentProfile.create({
+            user_email: user.email,
+            full_name: user.full_name || '',
+          });
+        }
+      } else if (selected === 'dosen') {
+        const existing = await base44.entities.LecturerProfile.filter({ user_email: user.email }).catch(() => []);
+        if (!existing || existing.length === 0) {
+          await base44.entities.LecturerProfile.create({
+            user_email: user.email,
+            full_name: user.full_name || '',
+            institution_id: 'default',
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Profile creation failed (non-critical):', e?.message);
+    }
+
+    // 4. Redirect sesuai peran
+    if (selected === 'dosen') {
+      navigate('/dosen-dashboard', { replace: true });
+    } else {
+      navigate('/dashboard', { replace: true });
+    }
+    setSaving(false);
   };
 
   if (!user) return (
@@ -115,8 +159,9 @@ export default function ProfileSetup() {
             return (
               <button
                 key={r.key}
+                type="button"
                 onClick={() => setSelected(r.key)}
-                className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 ${
+                className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? `${r.border} ${r.bg} shadow-sm`
                     : 'border-border hover:border-primary/30 hover:bg-secondary/30'
@@ -143,7 +188,12 @@ export default function ProfileSetup() {
           })}
         </div>
 
+        {error && (
+          <p className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded-lg mb-4">{error}</p>
+        )}
+
         <Button
+          type="button"
           onClick={handleContinue}
           disabled={!selected || saving}
           className="w-full h-11 rounded-xl font-semibold gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700"
@@ -154,6 +204,12 @@ export default function ProfileSetup() {
             <>Mulai Belajar <ChevronRight className="w-4 h-4" /></>
           )}
         </Button>
+
+        {selected && (
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Anda memilih sebagai <strong>{selected === 'dosen' ? 'Dosen / Pengajar' : 'Mahasiswa'}</strong>
+          </p>
+        )}
       </motion.div>
     </div>
   );

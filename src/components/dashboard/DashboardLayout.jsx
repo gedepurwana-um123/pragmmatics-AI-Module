@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { base44 } from '@/api/base44Client';
+import { userRole } from '@/lib/userRole';
 
 export default function DashboardLayout() {
   const [checking, setChecking] = useState(true);
@@ -10,13 +11,23 @@ export default function DashboardLayout() {
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u) { base44.auth.redirectToLogin(); return; }
-      // If role not set yet, redirect to profile setup
-      // 'user' is Base44 default role — treat it as "not set up yet"
+
+      // Tentukan role: cek localStorage dulu, fallback ke u.role
+      const savedRole = userRole.get(u.email);
+      const effectiveRole = savedRole || u.role;
+
       const appRoles = ['mahasiswa', 'dosen', 'admin'];
-      if (!u.role || !appRoles.includes(u.role)) {
+      if (!effectiveRole || !appRoles.includes(effectiveRole)) {
+        // Belum pilih peran → ke ProfileSetup
         navigate('/profile-setup', { replace: true });
         return;
       }
+
+      // Sinkronkan localStorage jika belum ada
+      if (!savedRole && appRoles.includes(u.role)) {
+        userRole.set(u.email, u.role);
+      }
+
       setChecking(false);
     }).catch(() => base44.auth.redirectToLogin());
   }, []);
