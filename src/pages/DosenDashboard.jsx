@@ -4,8 +4,9 @@ import { base44 } from '@/api/base44Client';
 import {
   Users, BookOpen, TrendingUp, Brain, Search, ChevronDown,
   ChevronUp, MessageSquare, Star, AlertTriangle, CheckCircle2,
-  FileText, Send, Filter, BarChart3, Award, Clock
+  FileText, Send, Filter, BarChart3, Award, Clock, Calendar
 } from 'lucide-react';
+import ClassCalendar from '@/components/calendar/ClassCalendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
@@ -154,6 +155,11 @@ export default function DosenDashboard() {
           <p className="text-sm text-muted-foreground">Buat kelas terlebih dahulu di menu Manajemen Kelas.</p>
         </div>
       )}
+
+      {/* Kalender Kelas */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <ClassCalendar mode="dosen" classes={classes} />
+      </motion.div>
 
       {selectedClass && (
         <>

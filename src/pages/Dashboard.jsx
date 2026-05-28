@@ -15,6 +15,7 @@ import {
 import LearningProgressDashboard from '@/components/dashboard/LearningProgressDashboard';
 import GamificationPanel from '@/components/dashboard/GamificationPanel';
 import ClassLeaderboard from '@/components/dashboard/ClassLeaderboard';
+import ClassCalendar from '@/components/calendar/ClassCalendar';
 
 const tooltipStyle = { backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px' };
 
@@ -252,6 +253,11 @@ export default function Dashboard() {
       {/* Leaderboard */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
         <ClassLeaderboard classId={enrollment?.class_id} currentUserEmail={user?.email} />
+      </motion.div>
+
+      {/* Kalender Jadwal Kelas */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44 }}>
+        <ClassCalendar mode="mahasiswa" />
       </motion.div>
 
       {/* Quick actions + Modules */}

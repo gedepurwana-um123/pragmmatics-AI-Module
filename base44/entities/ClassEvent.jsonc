@@ -1,0 +1,53 @@
+{
+  "name": "ClassEvent",
+  "type": "object",
+  "properties": {
+    "class_id": {
+      "type": "string",
+      "description": "ID kelas"
+    },
+    "lecturer_email": {
+      "type": "string",
+      "description": "Email dosen"
+    },
+    "title": {
+      "type": "string",
+      "description": "Judul event/sesi"
+    },
+    "description": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "sesi_kelas",
+        "tugas",
+        "ujian",
+        "pengumuman"
+      ],
+      "default": "sesi_kelas"
+    },
+    "start_datetime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_datetime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "location": {
+      "type": "string"
+    },
+    "reminder_sent": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "class_id",
+    "lecturer_email",
+    "title",
+    "event_type",
+    "start_datetime"
+  ]
+}
