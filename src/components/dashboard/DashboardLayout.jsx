@@ -11,8 +11,9 @@ export default function DashboardLayout() {
     base44.auth.me().then(u => {
       if (!u) { base44.auth.redirectToLogin(); return; }
       // If role not set yet, redirect to profile setup
-      const validRoles = ['mahasiswa', 'dosen', 'admin', 'user'];
-      if (!u.role || !validRoles.includes(u.role)) {
+      // 'user' is Base44 default role — treat it as "not set up yet"
+      const appRoles = ['mahasiswa', 'dosen', 'admin'];
+      if (!u.role || !appRoles.includes(u.role)) {
         navigate('/profile-setup', { replace: true });
         return;
       }

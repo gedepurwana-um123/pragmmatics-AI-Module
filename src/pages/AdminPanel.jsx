@@ -14,12 +14,14 @@ import AdminAIGovernance from '@/components/admin/AdminAIGovernance';
 import AdminContentModeration from '@/components/admin/AdminContentModeration';
 import AdminResearchCenter from '@/components/admin/AdminResearchCenter';
 import AdminSystemLogs from '@/components/admin/AdminSystemLogs';
+import AdminClassManager from '@/components/admin/AdminClassManager';
 
 const ADMIN_EMAIL = 'gedepurwana@gmail.com';
 
 const TABS = [
   { key: 'overview', label: 'Intelligence Overview', icon: BarChart3, color: 'from-indigo-500 to-violet-600', desc: 'KPI & Analytics Real-Time' },
-  { key: 'users', label: 'User Management', icon: Users, color: 'from-cyan-500 to-blue-600', desc: 'Kelola pengguna & kelas' },
+  { key: 'classes', label: 'Kelola Kelas', icon: GraduationCap, color: 'from-emerald-500 to-teal-600', desc: 'Kelas, dosen & enroll mahasiswa' },
+  { key: 'users', label: 'User Management', icon: Users, color: 'from-cyan-500 to-blue-600', desc: 'Kelola pengguna & data' },
   { key: 'ai', label: 'AI Governance', icon: Bot, color: 'from-violet-500 to-purple-600', desc: 'Kontrol sistem AI' },
   { key: 'moderation', label: 'Content Moderation', icon: AlertTriangle, color: 'from-rose-500 to-red-600', desc: 'Review konten terflag' },
   { key: 'research', label: 'Research Center', icon: FlaskConical, color: 'from-amber-500 to-orange-600', desc: 'Export & analitik penelitian' },
@@ -139,7 +141,7 @@ export default function AdminPanel() {
       </motion.div>
 
       {/* Tab Navigation */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
         {TABS.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)}
             className={`rounded-2xl p-4 border text-left transition-all ${
@@ -179,6 +181,7 @@ export default function AdminPanel() {
       {/* Tab Content */}
       <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
         {activeTab === 'overview' && <AdminOverview />}
+        {activeTab === 'classes' && <AdminClassManager />}
         {activeTab === 'users' && <AdminUserManagement />}
         {activeTab === 'ai' && <AdminAIGovernance />}
         {activeTab === 'moderation' && <AdminContentModeration />}

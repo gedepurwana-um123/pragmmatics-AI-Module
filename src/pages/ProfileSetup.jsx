@@ -37,7 +37,7 @@ export default function ProfileSetup() {
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u) { base44.auth.redirectToLogin(); return; }
-      // If role already set, skip setup and redirect appropriately
+      // Only skip setup if role is already one of the app-specific roles
       if (u.role === 'mahasiswa') {
         navigate('/dashboard', { replace: true });
         return;
@@ -47,9 +47,10 @@ export default function ProfileSetup() {
         return;
       }
       if (u.role === 'admin') {
-        navigate('/dashboard', { replace: true });
+        navigate('/admin-panel', { replace: true });
         return;
       }
+      // role === 'user' (Base44 default) or unset → show role selection
       setUser(u);
     }).catch(() => base44.auth.redirectToLogin());
   }, []);

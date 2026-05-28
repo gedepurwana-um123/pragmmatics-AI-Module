@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Users, Plus, Copy, BookOpen, Key, BarChart3, Eye, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { localUser } from '@/lib/localUser';
 import ClassFormModal from '@/components/lecturer/ClassFormModal';
 import ClassDetailPanel from '@/components/lecturer/ClassDetailPanel';
 
@@ -15,15 +14,22 @@ export default function ClassManagement() {
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
-  const currentUser = localUser.get();
+  const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    base44.auth.me().then(u => {
+      if (u) { setCurrentUser(u); loadData(u.email); }
+      else setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
 
-  const loadData = async () => {
+  const loadData = async (email) => {
     setLoading(true);
+    const userEmail = email || currentUser?.email;
+    if (!userEmail) { setLoading(false); return; }
     const [cls, crs] = await Promise.all([
-      base44.entities.Class.filter({ lecturer_email: currentUser?.email }),
-      base44.entities.Course.filter({ lecturer_id: currentUser?.email }),
+      base44.entities.Class.filter({ lecturer_email: userEmail }).catch(() => []),
+      base44.entities.Course.filter({ lecturer_id: userEmail }).catch(() => []),
     ]);
     setClasses(cls);
     setCourses(crs);
@@ -47,7 +53,7 @@ export default function ClassManagement() {
     }
     setShowForm(false);
     setEditItem(null);
-    loadData();
+    loadData(currentUser?.email);
   };
 
   const copyCode = (code) => {
