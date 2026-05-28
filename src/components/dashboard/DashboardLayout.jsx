@@ -8,9 +8,14 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.auth.isAuthenticated().then(auth => {
-      if (!auth) base44.auth.redirectToLogin();
-      else setChecking(false);
+    base44.auth.me().then(u => {
+      if (!u) { base44.auth.redirectToLogin(); return; }
+      // If role not set yet, redirect to profile setup
+      if (!u.role || (u.role !== 'mahasiswa' && u.role !== 'dosen' && u.role !== 'admin')) {
+        navigate('/profile-setup', { replace: true });
+        return;
+      }
+      setChecking(false);
     }).catch(() => base44.auth.redirectToLogin());
   }, []);
 

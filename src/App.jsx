@@ -41,6 +41,7 @@ import JoinClass from './pages/JoinClass';
 import LecturerAnalyticsDashboard from './pages/LecturerAnalyticsDashboard';
 import CulturalCaseTraining from './pages/CulturalCaseTraining';
 import AdminPanel from './pages/AdminPanel';
+import ProfileSetup from './pages/ProfileSetup';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -57,6 +58,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/profile-setup" element={<ProfileSetup />} />
       <Route element={<DashboardLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/ai-analyzer" element={<AIAnalyzer />} />
