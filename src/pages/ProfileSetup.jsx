@@ -37,8 +37,16 @@ export default function ProfileSetup() {
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u) { base44.auth.redirectToLogin(); return; }
-      // If role already set, skip setup
-      if (u.role === 'mahasiswa' || u.role === 'dosen') {
+      // If role already set, skip setup and redirect appropriately
+      if (u.role === 'mahasiswa') {
+        navigate('/dashboard', { replace: true });
+        return;
+      }
+      if (u.role === 'dosen') {
+        navigate('/dosen-dashboard', { replace: true });
+        return;
+      }
+      if (u.role === 'admin') {
         navigate('/dashboard', { replace: true });
         return;
       }
@@ -47,10 +55,21 @@ export default function ProfileSetup() {
   }, []);
 
   const handleContinue = async () => {
-    if (!selected) return;
+    if (!selected || saving) return;
     setSaving(true);
-    await base44.auth.updateMe({ role: selected });
-    navigate('/dashboard', { replace: true });
+    try {
+      await base44.auth.updateMe({ role: selected });
+      // Small delay to ensure the update is reflected before redirect
+      await new Promise(r => setTimeout(r, 500));
+      if (selected === 'dosen') {
+        navigate('/dosen-dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    } catch (err) {
+      console.error('Failed to save role:', err);
+      setSaving(false);
+    }
   };
 
   if (!user) return (
