@@ -9,6 +9,7 @@ import {
   Building2, Key, Shield
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { userRole } from '@/lib/userRole';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
@@ -54,11 +55,13 @@ export default function Sidebar() {
   }, []);
 
   const handleLogout = () => {
+    if (currentUser?.email) userRole.clear(currentUser.email);
     base44.auth.logout('/');
   };
 
-  const isAdmin = currentUser?.email === 'gedepurwana@gmail.com';
-  const isDosen = currentUser?.role === 'dosen' || currentUser?.role === 'lecturer';
+  const isAdmin = currentUser?.email === 'gedepurwana@gmail.com' || currentUser?.role === 'admin';
+  const effectiveRole = currentUser ? (userRole.get(currentUser.email) || currentUser.role) : null;
+  const isDosen = effectiveRole === 'dosen' || effectiveRole === 'lecturer';
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">

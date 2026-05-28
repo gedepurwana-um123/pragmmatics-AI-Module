@@ -9,6 +9,7 @@ import { Brain, LogIn, Menu, X, LayoutDashboard } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { userRole } from '@/lib/userRole';
 
 export default function Landing() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -18,6 +19,15 @@ export default function Landing() {
   useEffect(() => {
     base44.auth.isAuthenticated().then(auth => setIsLoggedIn(auth)).catch(() => {});
   }, []);
+
+  const handleDashboard = async () => {
+    const u = await base44.auth.me().catch(() => null);
+    if (!u) { navigate('/dashboard'); return; }
+    const role = userRole.get(u.email) || u.role;
+    if (role === 'dosen') navigate('/dosen-dashboard');
+    else if (role === 'admin') navigate('/admin-panel');
+    else navigate('/dashboard');
+  };
 
   return (
     <div className="min-h-screen bg-background neural-bg relative">
@@ -56,7 +66,7 @@ export default function Landing() {
             <div className="flex items-center gap-2">
               {isLoggedIn ? (
                 <Button
-                  onClick={() => navigate('/dashboard')}
+                  onClick={handleDashboard}
                   className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white rounded-xl px-5 h-10 text-sm font-semibold shadow-md hover:shadow-lg transition-all"
                 >
                   <LayoutDashboard className="w-4 h-4 mr-1.5" />
