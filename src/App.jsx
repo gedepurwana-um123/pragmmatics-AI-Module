@@ -40,6 +40,7 @@ import ClassManagement from './pages/ClassManagement';
 import JoinClass from './pages/JoinClass';
 import LecturerAnalyticsDashboard from './pages/LecturerAnalyticsDashboard';
 import CulturalCaseTraining from './pages/CulturalCaseTraining';
+import AdminPanel from './pages/AdminPanel';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -86,6 +87,7 @@ const AuthenticatedApp = () => {
         <Route path="/join-class" element={<JoinClass />} />
         <Route path="/lecturer-analytics" element={<LecturerAnalyticsDashboard />} />
         <Route path="/cultural-case-training" element={<CulturalCaseTraining />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

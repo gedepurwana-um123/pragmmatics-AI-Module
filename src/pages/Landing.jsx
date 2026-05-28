@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ParticleBackground from '../components/landing/ParticleBackground';
 import HeroSection from '../components/landing/HeroSection';
 import FeatureSection from '../components/landing/FeatureSection';
 import AIAnalyzerDemo from '../components/landing/AIAnalyzerDemo';
 import AnalyticsPreview from '../components/landing/AnalyticsPreview';
 import Footer from '../components/landing/Footer';
-import LoginModal from '../components/landing/LoginModal';
-import { Brain, LogIn, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Brain, LogIn, Menu, X, LayoutDashboard } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { base44 } from '@/api/base44Client';
 
 export default function Landing() {
-  const [loginOpen, setLoginOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    base44.auth.isAuthenticated().then(auth => setIsLoggedIn(auth)).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-background neural-bg relative">
@@ -49,13 +54,23 @@ export default function Landing() {
 
             {/* CTA */}
             <div className="flex items-center gap-2">
-              <Button
-                onClick={() => setLoginOpen(true)}
-                className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white rounded-xl px-5 h-10 text-sm font-semibold shadow-md hover:shadow-lg transition-all"
-              >
-                <LogIn className="w-4 h-4 mr-1.5" />
-                Masuk
-              </Button>
+              {isLoggedIn ? (
+                <Button
+                  onClick={() => navigate('/dashboard')}
+                  className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white rounded-xl px-5 h-10 text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+                >
+                  <LayoutDashboard className="w-4 h-4 mr-1.5" />
+                  Dashboard
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => base44.auth.redirectToLogin()}
+                  className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white rounded-xl px-5 h-10 text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+                >
+                  <LogIn className="w-4 h-4 mr-1.5" />
+                  Masuk
+                </Button>
+              )}
               {/* Mobile hamburger */}
               <button
                 className="md:hidden w-9 h-9 rounded-lg bg-secondary flex items-center justify-center"
@@ -86,8 +101,6 @@ export default function Landing() {
         <Footer />
       </div>
 
-      {/* Login Modal */}
-      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </div>
   );
 }

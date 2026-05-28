@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { Award, Star, Zap, Shield, Brain, MessageSquare, BookOpen, Flame, TrendingUp, Lock } from 'lucide-react';
-import { localUser } from '@/lib/localUser';
+
 
 const BADGES_CONFIG = [
   { code: 'pesan_tersopan', icon: '🕊️', label: 'Pesan Ter-sopan', desc: 'Skor kesantunan > 90 dalam satu sesi', color: 'from-emerald-400 to-teal-500', req: 'Politeness ≥ 90' },
@@ -31,19 +31,22 @@ function getLevelInfo(xp) {
 
 export default function GamificationPanel() {
   const [enrollment, setEnrollment] = useState(null);
-  const currentUser = localUser.get();
+  const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
-    if (!currentUser?.email) return;
-    base44.entities.Enrollment.filter({ student_email: currentUser.email, status: 'active' })
-      .then(enrs => { if (enrs?.length > 0) setEnrollment(enrs[0]); })
-      .catch(() => {});
-  }, [currentUser?.email]);
+    base44.auth.me().then(u => {
+      if (!u) return;
+      setUserEmail(u.email);
+      base44.entities.Enrollment.filter({ student_email: u.email, status: 'active' })
+        .then(enrs => { if (enrs?.length > 0) setEnrollment(enrs[0]); })
+        .catch(() => {});
+    }).catch(() => {});
+  }, []);
 
-  const xp = enrollment?.xp_points || 520;
-  const earnedBadges = enrollment?.badges || ['pesan_tersopan', 'penjelajah_ai'];
+  const xp = enrollment?.xp_points || 0;
+  const earnedBadges = enrollment?.badges || [];
   const levelInfo = getLevelInfo(xp);
-  const streak = enrollment?.streak_days || 7;
+  const streak = enrollment?.streak_days || 0;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}

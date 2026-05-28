@@ -6,12 +6,13 @@ import {
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
   Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database,
-  Building2, Key
+  Building2, Key, Shield
 } from 'lucide-react';
-import { localUser } from '@/lib/localUser';
+import { base44 } from '@/api/base44Client';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
+  { icon: Shield, label: 'Admin Panel', path: '/admin-panel', group: 'Administrasi', superAdminOnly: true },
   { icon: Building2, label: 'Manajemen Institusi', path: '/institution-setup', group: 'Administrasi', adminOnly: true },
   { icon: BookMarked, label: 'Manajemen Kelas', path: '/class-management', group: 'Administrasi', dosenOnly: true },
   { icon: BarChart3, label: 'Analitik Kelas', path: '/lecturer-analytics', group: 'Administrasi', dosenOnly: true },
@@ -43,20 +44,20 @@ const menuItems = [
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(() => localUser.get());
+  const [currentUser, setCurrentUser] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const iv = setInterval(() => setCurrentUser(localUser.get()), 500);
-    return () => clearInterval(iv);
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
   }, []);
 
   const handleLogout = () => {
-    localUser.clear();
-    setCurrentUser(null);
-    navigate('/');
+    base44.auth.logout('/');
   };
+
+  const isAdmin = currentUser?.email === 'gedepurwana@gmail.com';
+  const isDosen = currentUser?.role === 'dosen' || currentUser?.role === 'lecturer';
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -79,10 +80,10 @@ export default function Sidebar() {
       {/* Menu */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {menuItems.filter(item => {
-          if (item.adminOnly && currentUser?.role !== 'admin') return false;
-          if (item.dosenOnly && currentUser?.role !== 'dosen') return false;
-          if (item.studentOnly && currentUser?.role === 'dosen') return false;
-          if (item.studentOnly && currentUser?.role === 'admin') return false;
+          if (item.superAdminOnly && currentUser?.email !== 'gedepurwana@gmail.com') return false;
+          if (item.adminOnly && !isAdmin) return false;
+          if (item.dosenOnly && !isDosen && !isAdmin) return false;
+          if (item.studentOnly && (isDosen || isAdmin)) return false;
           return true;
         }).map((item, idx, arr) => {
           const isActive = location.pathname === item.path;
@@ -116,13 +117,13 @@ export default function Sidebar() {
       {/* User */}
       <div className="p-4 border-t border-border/20">
         <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${currentUser?.role === 'dosen' ? 'bg-gradient-to-br from-cyan-500 to-teal-600' : 'bg-gradient-to-br from-primary to-accent'}`}>
-            {currentUser?.role === 'dosen' ? <BookOpen className="w-4 h-4 text-white" /> : <GraduationCap className="w-4 h-4 text-white" />}
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isAdmin ? 'bg-gradient-to-br from-rose-500 to-orange-500' : isDosen ? 'bg-gradient-to-br from-cyan-500 to-teal-600' : 'bg-gradient-to-br from-primary to-accent'}`}>
+            {isAdmin ? <Building2 className="w-4 h-4 text-white" /> : isDosen ? <BookOpen className="w-4 h-4 text-white" /> : <GraduationCap className="w-4 h-4 text-white" />}
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold truncate">{currentUser?.full_name || 'Pengguna'}</p>
-              <p className="text-[10px] text-muted-foreground truncate capitalize">{currentUser?.role || 'mahasiswa'} · {currentUser?.institution || ''}</p>
+              <p className="text-[10px] text-muted-foreground truncate capitalize">{isAdmin ? 'Admin Sistem' : isDosen ? 'Dosen' : 'Mahasiswa'}</p>
             </div>
           )}
           {!collapsed && (
