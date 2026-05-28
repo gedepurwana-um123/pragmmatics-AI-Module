@@ -42,6 +42,7 @@ import LecturerAnalyticsDashboard from './pages/LecturerAnalyticsDashboard';
 import CulturalCaseTraining from './pages/CulturalCaseTraining';
 import AdminPanel from './pages/AdminPanel';
 import ProfileSetup from './pages/ProfileSetup';
+import DosenDashboard from './pages/DosenDashboard';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -90,6 +91,7 @@ const AuthenticatedApp = () => {
         <Route path="/lecturer-analytics" element={<LecturerAnalyticsDashboard />} />
         <Route path="/cultural-case-training" element={<CulturalCaseTraining />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
+        <Route path="/dosen-dashboard" element={<DosenDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

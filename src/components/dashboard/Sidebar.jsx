@@ -14,6 +14,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', group: null },
   { icon: Shield, label: 'Admin Panel', path: '/admin-panel', group: 'Administrasi', superAdminOnly: true },
   { icon: Building2, label: 'Manajemen Institusi', path: '/institution-setup', group: 'Administrasi', adminOnly: true },
+  { icon: GraduationCap, label: 'Dasbor Dosen', path: '/dosen-dashboard', group: 'Administrasi', dosenOnly: true },
   { icon: BookMarked, label: 'Manajemen Kelas', path: '/class-management', group: 'Administrasi', dosenOnly: true },
   { icon: BarChart3, label: 'Analitik Kelas', path: '/lecturer-analytics', group: 'Administrasi', dosenOnly: true },
   { icon: Key, label: 'Bergabung Kelas', path: '/join-class', group: 'Administrasi', studentOnly: true },

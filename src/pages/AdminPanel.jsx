@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 import {
-  Shield, Users, BookOpen, Building2, BarChart3, Trash2,
+  Shield, Users, BookOpen, Building2, BarChart3,
   RefreshCw, AlertTriangle, CheckCircle2, Database, Settings,
-  Eye, Mail, GraduationCap, Brain, TrendingUp, Search
+  Eye, GraduationCap, Brain, TrendingUp, Search, BookOpen as DosenIcon, X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState({});
   const [search, setSearch] = useState('');
   const [stats, setStats] = useState({});
+  const [previewRole, setPreviewRole] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     base44.auth.me().then(u => {
@@ -142,9 +145,17 @@ export default function AdminPanel() {
           <h1 className="text-2xl font-bold font-montserrat">Panel Administrasi</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Kontrol penuh seluruh data & pengguna PragmaticsAI</p>
         </div>
-        <Button variant="outline" size="sm" onClick={loadOverviewStats} className="gap-2">
-          <RefreshCw className="w-4 h-4" /> Refresh
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => { setPreviewRole('mahasiswa'); navigate('/dashboard'); }} className="gap-1.5 border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+            <Eye className="w-4 h-4" /> Preview Mahasiswa
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => { setPreviewRole('dosen'); navigate('/dosen-dashboard'); }} className="gap-1.5 border-cyan-200 text-cyan-700 hover:bg-cyan-50">
+            <Eye className="w-4 h-4" /> Preview Dosen
+          </Button>
+          <Button variant="outline" size="sm" onClick={loadOverviewStats} className="gap-2">
+            <RefreshCw className="w-4 h-4" /> Refresh
+          </Button>
+        </div>
       </motion.div>
 
       {/* Tabs */}
