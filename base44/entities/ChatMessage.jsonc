@@ -1,0 +1,66 @@
+{
+  "name": "ChatMessage",
+  "type": "object",
+  "properties": {
+    "room_id": {
+      "type": "string",
+      "description": "ID ruang chat (class_id atau 'dm_email1_email2')"
+    },
+    "room_type": {
+      "type": "string",
+      "enum": [
+        "class",
+        "dm"
+      ],
+      "default": "class"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "sender_name": {
+      "type": "string"
+    },
+    "sender_role": {
+      "type": "string",
+      "enum": [
+        "mahasiswa",
+        "dosen",
+        "admin"
+      ]
+    },
+    "content": {
+      "type": "string"
+    },
+    "politeness_score": {
+      "type": "number",
+      "description": "0-100, skor kesantunan otomatis dari AI"
+    },
+    "politeness_label": {
+      "type": "string",
+      "enum": [
+        "Sangat Santun",
+        "Santun",
+        "Netral",
+        "Kurang Santun",
+        "Tidak Santun"
+      ]
+    },
+    "toxicity_flag": {
+      "type": "boolean",
+      "default": false
+    },
+    "ai_suggestion": {
+      "type": "string",
+      "description": "Saran perbaikan dari AI jika kurang santun"
+    },
+    "is_deleted": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "room_id",
+    "sender_email",
+    "content"
+  ]
+}

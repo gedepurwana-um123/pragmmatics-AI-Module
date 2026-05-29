@@ -6,7 +6,7 @@ import {
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
   Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database,
-  Building2, Key, Shield
+  Building2, Key, Shield, Hash, FileText
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { userRole } from '@/lib/userRole';
@@ -18,6 +18,7 @@ const menuItems = [
   { icon: GraduationCap, label: 'Dasbor Dosen', path: '/dosen-dashboard', group: 'Administrasi', dosenOnly: true },
   { icon: BookMarked, label: 'Manajemen Kelas', path: '/class-management', group: 'Administrasi', dosenOnly: true },
   { icon: BarChart3, label: 'Analitik Kelas', path: '/lecturer-analytics', group: 'Administrasi', dosenOnly: true },
+  { icon: FileText, label: 'Laporan PDF', path: '/pragmatic-report', group: 'Administrasi', dosenOnly: true },
   { icon: Key, label: 'Bergabung Kelas', path: '/join-class', group: 'Administrasi', studentOnly: true },
   { icon: Layers, label: 'Skenario Belajar', path: '/learning-ecosystem', group: 'Ekosistem' },
   { icon: Globe, label: 'Kearifan Budaya AI', path: '/cultural-wisdom', group: 'Ekosistem' },
@@ -31,6 +32,8 @@ const menuItems = [
   { icon: Database, label: 'Perpustakaan Etnografi', path: '/ethnography-case-library', group: 'Belajar' },
   { icon: Swords, label: 'Latihan Kasus Budaya', path: '/cultural-case-training', group: 'Belajar' },
   { icon: Globe, label: 'Wisata Budaya Pragmatik', path: '/pragmatic-cultural-tour', group: 'Belajar' },
+  { icon: Hash, label: 'Chat Kelas', path: '/class-chat', group: 'Kolaborasi' },
+  { icon: BookOpen, label: 'Forum Etnografi', path: '/ethnography-forum', group: 'Kolaborasi' },
   { icon: Users, label: 'Kolaborasi Kelompok', path: '/study-group', group: 'Kolaborasi' },
   { icon: MessageSquare, label: 'Forum Komunitas', path: '/community', group: 'Kolaborasi' },
   { icon: Swords, label: 'Tantangan Kelompok', path: '/group-challenge', group: 'Kolaborasi' },

@@ -1,0 +1,85 @@
+{
+  "name": "EthnographyPost",
+  "type": "object",
+  "properties": {
+    "class_id": {
+      "type": "string"
+    },
+    "course_id": {
+      "type": "string"
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_role": {
+      "type": "string",
+      "enum": [
+        "mahasiswa",
+        "dosen"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "twitter",
+        "tiktok",
+        "whatsapp",
+        "facebook",
+        "forum_online",
+        "lainnya"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "upvotes": {
+      "type": "number",
+      "default": 0
+    },
+    "upvoted_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "replies_count": {
+      "type": "number",
+      "default": 0
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "pending",
+        "flagged"
+      ],
+      "default": "approved"
+    },
+    "ai_analysis": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "class_id",
+    "author_email",
+    "title",
+    "content"
+  ]
+}

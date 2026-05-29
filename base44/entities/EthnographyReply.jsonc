@@ -1,0 +1,44 @@
+{
+  "name": "EthnographyReply",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string"
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_role": {
+      "type": "string",
+      "enum": [
+        "mahasiswa",
+        "dosen"
+      ]
+    },
+    "content": {
+      "type": "string"
+    },
+    "upvotes": {
+      "type": "number",
+      "default": 0
+    },
+    "upvoted_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "is_lecturer_reply": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "post_id",
+    "author_email",
+    "content"
+  ]
+}

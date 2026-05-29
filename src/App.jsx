@@ -43,6 +43,9 @@ import CulturalCaseTraining from './pages/CulturalCaseTraining';
 import AdminPanel from './pages/AdminPanel';
 import ProfileSetup from './pages/ProfileSetup';
 import DosenDashboard from './pages/DosenDashboard';
+import ClassChat from './pages/ClassChat';
+import EthnographyForum from './pages/EthnographyForum';
+import PragmaticReport from './pages/PragmaticReport';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -92,6 +95,9 @@ const AuthenticatedApp = () => {
         <Route path="/cultural-case-training" element={<CulturalCaseTraining />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
         <Route path="/dosen-dashboard" element={<DosenDashboard />} />
+        <Route path="/class-chat" element={<ClassChat />} />
+        <Route path="/ethnography-forum" element={<EthnographyForum />} />
+        <Route path="/pragmatic-report" element={<PragmaticReport />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
