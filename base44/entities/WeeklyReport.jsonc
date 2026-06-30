@@ -1,0 +1,78 @@
+{
+  "name": "WeeklyReport",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "week_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "week_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "pragmatic_score": {
+      "type": "number"
+    },
+    "politeness_score": {
+      "type": "number"
+    },
+    "toxicity_score": {
+      "type": "number"
+    },
+    "cultural_sensitivity": {
+      "type": "number"
+    },
+    "ethical_awareness": {
+      "type": "number"
+    },
+    "ai_interactions": {
+      "type": "number"
+    },
+    "modules_completed": {
+      "type": "number"
+    },
+    "reflections_written": {
+      "type": "number"
+    },
+    "score_delta": {
+      "type": "number",
+      "description": "Perubahan skor dari minggu sebelumnya"
+    },
+    "achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "weak_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ai_summary": {
+      "type": "string"
+    },
+    "is_sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_email",
+    "week_start"
+  ]
+}

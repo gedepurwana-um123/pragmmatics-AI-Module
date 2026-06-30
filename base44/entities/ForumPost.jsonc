@@ -1,0 +1,83 @@
+{
+  "name": "ForumPost",
+  "type": "object",
+  "properties": {
+    "author_email": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "analisis_kasus",
+        "dilema_pragmatik",
+        "refleksi",
+        "diskusi_umum",
+        "tanya_jawab"
+      ],
+      "default": "diskusi_umum"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "likes": {
+      "type": "number",
+      "default": 0
+    },
+    "replies_count": {
+      "type": "number",
+      "default": 0
+    },
+    "moderation_status": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "pending",
+        "flagged",
+        "rejected"
+      ],
+      "default": "approved"
+    },
+    "moderation_note": {
+      "type": "string"
+    },
+    "toxicity_score": {
+      "type": "number",
+      "default": 0
+    },
+    "politeness_score": {
+      "type": "number",
+      "default": 80
+    },
+    "is_pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "case_reference": {
+      "type": "string",
+      "description": "ID kasus yang direferensikan"
+    },
+    "liked_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "author_email",
+    "title",
+    "content"
+  ]
+}

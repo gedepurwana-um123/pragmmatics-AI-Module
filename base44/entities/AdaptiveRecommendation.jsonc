@@ -1,0 +1,58 @@
+{
+  "name": "AdaptiveRecommendation",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "modul",
+        "kasus",
+        "latihan",
+        "tantangan",
+        "budaya"
+      ],
+      "default": "modul"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "tinggi",
+        "sedang",
+        "rendah"
+      ],
+      "default": "sedang"
+    },
+    "title": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Alasan rekomendasi diberikan"
+    },
+    "target_skill": {
+      "type": "string"
+    },
+    "estimated_improvement": {
+      "type": "number"
+    },
+    "action_url": {
+      "type": "string"
+    },
+    "is_completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_email",
+    "title",
+    "reason"
+  ]
+}

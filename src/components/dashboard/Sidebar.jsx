@@ -6,7 +6,7 @@ import {
   FlaskConical, PenLine, TrendingUp, Award, Settings,
   ChevronLeft, Brain, Users, Menu, X, Library, Layers, Globe, Bell,
   Swords, BookMarked, MessageSquare, Lightbulb, BarChart2, Mic, Theater, LogOut, GraduationCap, Database,
-  Building2, Key, Shield, Hash, FileText
+  Building2, Key, Shield, Hash, FileText, HelpCircle
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { userRole } from '@/lib/userRole';
@@ -43,6 +43,7 @@ const menuItems = [
   { icon: BarChart2, label: 'Laporan Mingguan', path: '/weekly-report', group: 'Analitik' },
   { icon: Award, label: 'Pencapaian', path: '/achievements', group: 'Analitik' },
   { icon: Bell, label: 'Notifikasi', path: '/notifications', group: null },
+  { icon: HelpCircle, label: 'Panduan Penggunaan', path: '/user-guide', group: null },
   { icon: Settings, label: 'Pengaturan', path: '/settings', group: null },
 ];
 

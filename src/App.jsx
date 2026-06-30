@@ -46,6 +46,7 @@ import DosenDashboard from './pages/DosenDashboard';
 import ClassChat from './pages/ClassChat';
 import EthnographyForum from './pages/EthnographyForum';
 import PragmaticReport from './pages/PragmaticReport';
+import UserGuide from './pages/UserGuide';
 
 const AuthenticatedApp = () => {
   const [localU, setLocalU] = useState(() => localUser.get());
@@ -98,6 +99,7 @@ const AuthenticatedApp = () => {
         <Route path="/class-chat" element={<ClassChat />} />
         <Route path="/ethnography-forum" element={<EthnographyForum />} />
         <Route path="/pragmatic-report" element={<PragmaticReport />} />
+        <Route path="/user-guide" element={<UserGuide />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
