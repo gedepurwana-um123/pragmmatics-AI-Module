@@ -7,6 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import GuideSection from '@/components/guide/GuideSection';
+import GuideOverviewSection from '@/components/guide/GuideOverviewSection';
 import { generateGuidePDF } from '@/components/guide/GuidePDFExporter';
 import { studentGuide } from '@/components/guide/studentGuideData';
 import { lecturerGuide } from '@/components/guide/lecturerGuideData';
@@ -154,18 +155,9 @@ export default function UserGuide() {
         />
       </div>
 
-      {/* Info Banner */}
-      {!search && (
-        <div className="bg-gradient-to-r from-indigo-50 to-cyan-50 border border-indigo-100 rounded-2xl p-4 flex items-start gap-3">
-          <Users className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-foreground">Tahapan Pembelajaran Etnografi Digital</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Platform menggunakan 7 fase: Orientasi → Identifikasi → Pengumpulan Data → Analisis Pragmatik → Refleksi Kritis → Sintesis Kultural → Transformasi Etis.
-              Setiap fitur dirancang untuk mendukung perkembangan kompetensi pada setiap fase.
-            </p>
-          </div>
-        </div>
+      {/* Conceptual Overview — only when not searching */}
+      {!search && guideData.overview && (
+        <GuideOverviewSection overview={guideData.overview} role={role} />
       )}
 
       {/* Guide Sections */}

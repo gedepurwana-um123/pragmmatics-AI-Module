@@ -1,6 +1,9 @@
+import { guideOverview } from './guideOverview';
+
 export const studentGuide = {
   title: "Panduan Lengkap Mahasiswa",
   subtitle: "PragmaticsAI — Platform Etika Komunikasi Digital",
+  overview: guideOverview,
   sections: [
     {
       id: "akses",
