@@ -1,13 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen, Download, Search, GraduationCap, Users,
-  FileText, Loader2, BookMarked
+  FileText, Loader2, BookMarked, Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import GuideSection from '@/components/guide/GuideSection';
 import GuideOverviewSection from '@/components/guide/GuideOverviewSection';
+import GuideQuickStart from '@/components/guide/GuideQuickStart';
+import GuideTableOfContents from '@/components/guide/GuideTableOfContents';
 import { generateGuidePDF } from '@/components/guide/GuidePDFExporter';
 import { studentGuide } from '@/components/guide/studentGuideData';
 import { lecturerGuide } from '@/components/guide/lecturerGuideData';
@@ -16,6 +18,8 @@ export default function UserGuide() {
   const [role, setRole] = useState('mahasiswa');
   const [search, setSearch] = useState('');
   const [generating, setGenerating] = useState('none');
+  const [activeId, setActiveId] = useState('quick-start');
+  const sectionRefs = useRef({});
 
   const guideData = role === 'dosen' ? lecturerGuide : studentGuide;
 
@@ -51,6 +55,41 @@ export default function UserGuide() {
   };
 
   const isGenerating = generating !== 'none';
+
+  // Scroll to a section by id
+  const handleJump = useCallback((id) => {
+    const el = sectionRefs.current[id];
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  // Track active section on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const ids = ['quick-start', ...guideData.sections.map(s => s.id)];
+      let current = 'quick-start';
+      for (const id of ids) {
+        const el = sectionRefs.current[id];
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 120) {
+            current = id;
+          }
+        }
+      }
+      setActiveId(current);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [guideData]);
+
+  // Reset active when role changes
+  useEffect(() => {
+    setActiveId('quick-start');
+    sectionRefs.current = {};
+  }, [role]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 space-y-6 bg-background min-h-screen">
@@ -155,48 +194,82 @@ export default function UserGuide() {
         />
       </div>
 
-      {/* Conceptual Overview — only when not searching */}
-      {!search && guideData.overview && (
-        <GuideOverviewSection overview={guideData.overview} role={role} />
-      )}
-
-      {/* Guide Sections */}
-      <div className="space-y-3">
-        {filteredSections.length > 0 ? (
-          filteredSections.map((section, idx) => (
-            <GuideSection key={section.id} section={section} index={idx} />
-          ))
-        ) : (
-          <div className="text-center py-16">
-            <Search className="w-10 h-10 mx-auto text-muted-foreground/30 mb-2" />
-            <p className="text-sm text-muted-foreground">Tidak ada hasil untuk "{search}"</p>
-          </div>
+      {/* Main content with sidebar TOC */}
+      <div className="flex gap-6">
+        {/* Table of Contents sidebar (desktop only) */}
+        {!search && (
+          <GuideTableOfContents
+            sections={guideData.sections}
+            activeId={activeId}
+            onJump={handleJump}
+            role={role}
+          />
         )}
-      </div>
 
-      {/* Bottom Download CTA */}
-      <div className="bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-6 text-white text-center">
-        <FileText className="w-8 h-8 mx-auto mb-2 opacity-80" />
-        <h3 className="font-bold font-montserrat text-base mb-1">Download Panduan Lengkap (PDF)</h3>
-        <p className="text-xs text-white/70 mb-4 max-w-md mx-auto">
-          Simpan panduan offline untuk referensi kapan saja. PDF berisi daftar isi, langkah detail, dan tips praktis.
-        </p>
-        <div className="flex flex-wrap gap-2 justify-center">
-          <Button
-            onClick={() => { setRole('mahasiswa'); setTimeout(handleDownload, 50); }}
-            disabled={isGenerating}
-            className="bg-white text-indigo-700 hover:bg-white/90 gap-2 text-sm"
-          >
-            <Download className="w-4 h-4" /> PDF Mahasiswa
-          </Button>
-          <Button
-            onClick={() => { setRole('dosen'); setTimeout(handleDownload, 50); }}
-            disabled={isGenerating}
-            className="bg-white/15 hover:bg-white/25 text-white border border-white/30 gap-2 text-sm"
-            variant="outline"
-          >
-            <Download className="w-4 h-4" /> PDF Dosen
-          </Button>
+        {/* Content area */}
+        <div className="flex-1 min-w-0 space-y-6">
+          {/* Quick Start — only when not searching */}
+          {!search && (
+            <div ref={el => sectionRefs.current['quick-start'] = el}>
+              <div className="flex items-center gap-2 mb-3">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <h2 className="font-bold font-montserrat text-sm text-foreground">Mulai Cepat</h2>
+                <span className="text-[11px] text-muted-foreground">3 langkah utama untuk memulai</span>
+              </div>
+              <GuideQuickStart
+                role={role}
+                onDownload={handleDownload}
+                generating={generating}
+              />
+            </div>
+          )}
+
+          {/* Conceptual Overview — only when not searching */}
+          {!search && guideData.overview && (
+            <GuideOverviewSection overview={guideData.overview} role={role} />
+          )}
+
+          {/* Guide Sections */}
+          <div className="space-y-3">
+            {filteredSections.length > 0 ? (
+              filteredSections.map((section, idx) => (
+                <div key={section.id} ref={el => sectionRefs.current[section.id] = el}>
+                  <GuideSection section={section} index={idx} />
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-16">
+                <Search className="w-10 h-10 mx-auto text-muted-foreground/30 mb-2" />
+                <p className="text-sm text-muted-foreground">Tidak ada hasil untuk "{search}"</p>
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Download CTA */}
+          <div className="bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-6 text-white text-center">
+            <FileText className="w-8 h-8 mx-auto mb-2 opacity-80" />
+            <h3 className="font-bold font-montserrat text-base mb-1">Download Panduan Lengkap (PDF)</h3>
+            <p className="text-xs text-white/70 mb-4 max-w-md mx-auto">
+              Simpan panduan offline untuk referensi kapan saja. PDF berisi daftar isi, langkah detail, dan tips praktis.
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Button
+                onClick={() => { setRole('mahasiswa'); setTimeout(handleDownload, 50); }}
+                disabled={isGenerating}
+                className="bg-white text-indigo-700 hover:bg-white/90 gap-2 text-sm"
+              >
+                <Download className="w-4 h-4" /> PDF Mahasiswa
+              </Button>
+              <Button
+                onClick={() => { setRole('dosen'); setTimeout(handleDownload, 50); }}
+                disabled={isGenerating}
+                className="bg-white/15 hover:bg-white/25 text-white border border-white/30 gap-2 text-sm"
+                variant="outline"
+              >
+                <Download className="w-4 h-4" /> PDF Dosen
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
