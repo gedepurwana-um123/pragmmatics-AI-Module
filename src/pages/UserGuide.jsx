@@ -37,22 +37,34 @@ export default function UserGuide() {
     );
   }, [guideData, search]);
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     setGenerating(role);
     setTimeout(() => {
-      generateGuidePDF(role);
-      setGenerating('none');
-    }, 100);
-  };
+      try {
+        generateGuidePDF(role);
+      } catch (err) {
+        console.error('PDF generation error:', err);
+      } finally {
+        setGenerating('none');
+      }
+    }, 150);
+  }, [role]);
 
-  const handleDownloadBoth = () => {
+  const handleDownloadBoth = useCallback(() => {
     setGenerating('both');
     setTimeout(() => {
-      generateGuidePDF('mahasiswa');
-      setTimeout(() => generateGuidePDF('dosen'), 500);
-      setGenerating('none');
-    }, 100);
-  };
+      try {
+        generateGuidePDF('mahasiswa');
+        setTimeout(() => {
+          try { generateGuidePDF('dosen'); } catch (e) { console.error(e); }
+          setGenerating('none');
+        }, 600);
+      } catch (err) {
+        console.error('PDF generation error:', err);
+        setGenerating('none');
+      }
+    }, 150);
+  }, []);
 
   const isGenerating = generating !== 'none';
 
