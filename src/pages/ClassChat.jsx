@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Send, MessageSquare, Users, Bot, ChevronDown, Hash } from 'lucide-react';
+import { Send, MessageSquare, Users, Bot, ChevronDown, Hash, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatBubble from '@/components/chat/ChatBubble';
 import PolitenessChecker from '@/components/chat/PolitenessChecker';
@@ -100,8 +100,22 @@ Berikan penilaian dalam JSON dengan format:
     }, 800);
   };
 
+  const applySuggestion = () => {
+    if (politenessResult?.suggestion) {
+      setInput(politenessResult.suggestion);
+      setPolitenessResult(null);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || !selectedClass || !user || sending) return;
+
+    // Block sending if message is detected as toxic (score < 30)
+    if (politenessResult && politenessResult.score < 30) {
+      setSending(false);
+      return;
+    }
+
     setSending(true);
     const role = userRole.get(user.email) || user.role;
     const score = politenessResult?.score ?? 80;
@@ -201,7 +215,7 @@ Berikan penilaian dalam JSON dengan format:
 
             {/* Input */}
             <div className="bg-white border-t border-border p-4 flex-shrink-0 space-y-2">
-              <PolitenessChecker checking={checking} result={politenessResult} />
+              <PolitenessChecker checking={checking} result={politenessResult} onApplySuggestion={applySuggestion} />
               <div className="flex gap-3 items-end">
                 <div className="flex-1 relative">
                   <textarea
@@ -215,12 +229,19 @@ Berikan penilaian dalam JSON dengan format:
                 </div>
                 <Button
                   onClick={handleSend}
-                  disabled={!input.trim() || sending}
+                  disabled={!input.trim() || sending || (politenessResult?.score != null && politenessResult.score < 30)}
                   className="h-11 w-11 p-0 rounded-xl flex-shrink-0"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
               </div>
+              {/* Toxicity block warning */}
+              {politenessResult && politenessResult.score < 30 && (
+                <div className="flex items-center gap-2 text-xs text-rose-700 bg-rose-50 border border-rose-300 px-3 py-2 rounded-xl">
+                  <ShieldAlert className="w-4 h-4 flex-shrink-0" />
+                  <span className="font-medium">Pesan terdeteksi tidak santun. Mohon revisi pesan sebelum dapat dikirim.</span>
+                </div>
+              )}
               <p className="text-[10px] text-muted-foreground text-center">
                 🛡️ Setiap pesan dianalisis AI untuk memastikan komunikasi akademik yang santun
               </p>

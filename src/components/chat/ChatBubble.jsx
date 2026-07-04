@@ -47,11 +47,26 @@ export default function ChatBubble({ msg, isOwn }) {
           )}
         </div>
 
-        {/* AI suggestion for kurang santun */}
-        {msg.ai_suggestion && !isOwn && (
-          <div className="flex items-start gap-1.5 text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl max-w-xs">
-            <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-            <span>{msg.ai_suggestion}</span>
+        {/* AI warning — shown for ALL messages (including own) when kurang/tidak santun */}
+        {msg.ai_suggestion && !msg.is_deleted && (
+          <div className={`flex items-start gap-1.5 text-[10px] px-2.5 py-1.5 rounded-xl max-w-xs ${
+            msg.politeness_score < 30
+              ? 'text-rose-700 bg-rose-50 border border-rose-200'
+              : 'text-amber-700 bg-amber-50 border border-amber-200'
+          } ${isOwn ? 'self-end' : ''}`}>
+            <AlertTriangle className={`w-3 h-3 mt-0.5 flex-shrink-0 ${msg.politeness_score < 30 ? 'text-rose-500' : 'text-amber-500'}`} />
+            <div>
+              <span className="font-semibold">Peringatan AI: </span>
+              <span>{msg.ai_suggestion}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Toxicity flag badge */}
+        {msg.toxicity_flag && !msg.is_deleted && (
+          <div className={`flex items-center gap-1 text-[9px] font-semibold text-rose-600 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-full ${isOwn ? 'self-end' : ''}`}>
+            <AlertTriangle className="w-2.5 h-2.5" />
+            Pesan Ditandai Toksis
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import {
   FileText, Send, Filter, BarChart3, Award, Clock, Calendar
 } from 'lucide-react';
 import ClassCalendar from '@/components/calendar/ClassCalendar';
+import ClassTrendChart from '@/components/lecturer/ClassTrendChart';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
@@ -183,6 +184,9 @@ export default function DosenDashboard() {
               ))}
             </div>
           )}
+
+          {/* Tren Perkembangan Kelas */}
+          <ClassTrendChart scores={scores} className={selectedClass.class_name} />
 
           {/* Student list */}
           <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
