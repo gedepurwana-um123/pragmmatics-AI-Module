@@ -10,6 +10,7 @@ import {
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { base44 } from '@/api/base44Client';
 import { buildSocialLabPrompt } from '@/lib/aiPrompts';
+import MediaUpload from '@/components/ai/MediaUpload';
 
 const platforms = [
   { id: 'instagram', label: 'Instagram', icon: '📸', color: 'from-pink-500 to-rose-500' },
@@ -72,15 +73,18 @@ export default function SocialLab() {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [activeScenario, setActiveScenario] = useState(null);
   const [scaffoldingLevel] = useState('menengah');
+  const [fileUrls, setFileUrls] = useState([]);
 
   const analyzeComment = async (comment) => {
     setSelectedComment(comment);
     setLoading(true);
     setAnalysis(null);
     setRewrite('');
-    const prompt = buildSocialLabPrompt(comment.text, platform, scaffoldingLevel);
+    const prompt = buildSocialLabPrompt(comment.text, platform, scaffoldingLevel)
+      + (fileUrls.length ? '\n\nCatatan: Gambar/screenshot media sosial telah dilampirkan. Analisis juga konten visual (caption, komentar, meme, atau konteks gambar) yang terlampir jika relevan.' : '');
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
+      ...(fileUrls.length ? { file_urls: fileUrls } : {}),
       response_json_schema: {
         type: 'object',
         properties: {
@@ -98,6 +102,7 @@ export default function SocialLab() {
     });
     setAnalysis(res);
     setLoading(false);
+    setFileUrls([]);
   };
 
   const analyzeCustom = async () => {
@@ -223,6 +228,9 @@ Berikan HANYA versi yang sudah diperbaiki (tanpa penjelasan) dalam bahasa Indone
                   <Textarea value={customText} onChange={e => setCustomText(e.target.value)}
                     placeholder="Ketik komentar yang ingin dianalisis..."
                     className="min-h-[80px] resize-none bg-secondary/30 border-border text-sm mb-3" />
+                  <div className="mb-3">
+                    <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan screenshot/komentar media sosial" />
+                  </div>
                   <Button onClick={analyzeCustom} disabled={loading || !customText.trim()} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl text-sm">
                     {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <BarChart3 className="w-4 h-4 mr-2" />}Analisis Sekarang
                   </Button>

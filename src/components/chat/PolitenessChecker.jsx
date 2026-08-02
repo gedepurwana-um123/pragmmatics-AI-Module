@@ -32,6 +32,9 @@ export default function PolitenessChecker({ checking, result, onApplySuggestion 
           {isImpolite && <span className="font-bold uppercase text-[9px] tracking-wide">⚠ Peringatan AI</span>}
           <span className="font-semibold">{result.label}</span>
           <span className="opacity-70">({result.score}/100)</span>
+          {result.category && result.category !== 'Tidak Ada Masalah' && (
+            <span className="px-1.5 py-0.5 rounded-full bg-white/70 border border-current/20 text-[9px] font-medium">{result.category}</span>
+          )}
         </div>
         {result.suggestion && (
           <div className="mt-1.5 flex items-start gap-1.5">

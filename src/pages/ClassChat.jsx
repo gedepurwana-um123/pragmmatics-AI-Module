@@ -16,6 +16,7 @@ export default function ClassChat() {
   const [sending, setSending] = useState(false);
   const [checking, setChecking] = useState(false);
   const [politenessResult, setPolitenessResult] = useState(null);
+  const [confirming, setConfirming] = useState(false);
   const [onlineCount, setOnlineCount] = useState(0);
   const checkTimeout = useRef(null);
   const bottomRef = useRef(null);
@@ -79,17 +80,21 @@ export default function ClassChat() {
           prompt: `Analisis tingkat kesantunan pesan berikut dalam konteks komunikasi akademik Indonesia.
 Pesan: "${val}"
 
+Deteksi juga kategori masalah jika ada. Pilih salah satu: "Ujaran Kebencian", "Kata Kasar", "Sarkasme/Merendahkan", "Spam/Promosi", "Tidak Relevan", atau "Tidak Ada Masalah".
+
 Berikan penilaian dalam JSON dengan format:
 {
   "score": <0-100>,
   "label": <"Sangat Santun"|"Santun"|"Netral"|"Kurang Santun"|"Tidak Santun">,
-  "suggestion": <string kosong jika santun, atau saran singkat perbaikan>
+  "category": <kategori masalah atau "Tidak Ada Masalah">,
+  "suggestion": <string kosong jika santun, atau saran singkat perbaikan yang lebih sopan>
 }`,
           response_json_schema: {
             type: 'object',
             properties: {
               score: { type: 'number' },
               label: { type: 'string' },
+              category: { type: 'string' },
               suggestion: { type: 'string' }
             }
           }
@@ -107,16 +112,10 @@ Berikan penilaian dalam JSON dengan format:
     }
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || !selectedClass || !user || sending) return;
-
-    // Block sending if message is detected as toxic (score < 30)
-    if (politenessResult && politenessResult.score < 30) {
-      setSending(false);
-      return;
-    }
-
+  const doSend = async () => {
+    if (!input.trim() || !selectedClass || !user) return;
     setSending(true);
+    setConfirming(false);
     const role = userRole.get(user.email) || user.role;
     const score = politenessResult?.score ?? 80;
     const label = politenessResult?.label ?? 'Netral';
@@ -139,6 +138,23 @@ Berikan penilaian dalam JSON dengan format:
     setPolitenessResult(null);
     setChecking(false);
     setSending(false);
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || !selectedClass || !user || sending) return;
+
+    // Block sending if message is detected as toxic (score < 30)
+    if (politenessResult && politenessResult.score < 30) {
+      return;
+    }
+
+    // Require confirmation if message is detected as impolite (score 30-49)
+    if (politenessResult && politenessResult.score >= 30 && politenessResult.score < 50) {
+      setConfirming(true);
+      return;
+    }
+
+    await doSend();
   };
 
   return (
@@ -215,6 +231,20 @@ Berikan penilaian dalam JSON dengan format:
 
             {/* Input */}
             <div className="bg-white border-t border-border p-4 flex-shrink-0 space-y-2">
+              {/* Konfirmasi pesan kurang santun */}
+              {confirming && politenessResult && (
+                <div className="flex items-start gap-2 px-3 py-3 rounded-xl border border-amber-300 bg-amber-50 text-xs">
+                  <ShieldAlert className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-amber-800">Pesan terdeteksi <span className="font-bold">{politenessResult.label}</span>{politenessResult.category && politenessResult.category !== 'Tidak Ada Masalah' ? ` — ${politenessResult.category}` : ''}.</p>
+                    <p className="text-amber-700 mt-0.5">Anda yakin ingin mengirim pesan ini? Pertimbangkan untuk merevisi agar komunikasi tetap santun.</p>
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={doSend} className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold">Tetap Kirim</button>
+                      <button onClick={() => setConfirming(false)} className="px-3 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-700 hover:bg-amber-100 font-semibold">Revisi</button>
+                    </div>
+                  </div>
+                </div>
+              )}
               <PolitenessChecker checking={checking} result={politenessResult} onApplySuggestion={applySuggestion} />
               <div className="flex gap-3 items-end">
                 <div className="flex-1 relative">
@@ -229,7 +259,7 @@ Berikan penilaian dalam JSON dengan format:
                 </div>
                 <Button
                   onClick={handleSend}
-                  disabled={!input.trim() || sending || (politenessResult?.score != null && politenessResult.score < 30)}
+                  disabled={!input.trim() || sending || confirming || (politenessResult?.score != null && politenessResult.score < 30)}
                   className="h-11 w-11 p-0 rounded-xl flex-shrink-0"
                 >
                   <Send className="w-4 h-4" />

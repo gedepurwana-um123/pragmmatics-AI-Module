@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Globe, Sparkles, BookOpen, Brain, Shield, RefreshCw, ChevronRight, MessageSquare, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import MediaUpload from '@/components/ai/MediaUpload';
 
 const CULTURES = [
   {
@@ -60,6 +61,7 @@ export default function CulturalWisdom() {
   const [wisdomResult, setWisdomResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dbRecommendations, setDbRecommendations] = useState([]);
+  const [fileUrls, setFileUrls] = useState([]);
 
   useEffect(() => {
     base44.entities.CulturalRecommendation.filter({ is_active: true })
@@ -71,6 +73,9 @@ export default function CulturalWisdom() {
     if (!testText.trim()) return;
     setLoading(true);
     setWisdomResult(null);
+    const attachmentNote = fileUrls.length
+      ? `\n\nCatatan: Gambar/file telah dilampirkan untuk konteks tambahan. Analisis juga konten visual/dokumen yang terlampir jika relevan dengan komunikasi digital.`
+      : '';
     const res = await base44.integrations.Core.InvokeLLM({
       prompt: `Kamu adalah Cultural Wisdom Recommendation Engine PragmaticsAI.
 
@@ -85,7 +90,7 @@ Berikan analisis mendalam:
 2. Bagaimana perspektif budaya ${selectedCulture.name} memandang komunikasi seperti ini?
 3. Rekomendasi spesifik berbasis nilai ${selectedCulture.prinsip}
 4. Versi alternatif yang mencerminkan nilai budaya tersebut
-5. Pelajaran pragmatik etnografi yang dapat dipetik`,
+5. Pelajaran pragmatik etnografi yang dapat dipetik${attachmentNote}`,
       response_json_schema: {
         type: 'object',
         properties: {
@@ -101,6 +106,7 @@ Berikan analisis mendalam:
     });
     setWisdomResult(res);
     setLoading(false);
+    setFileUrls([]);
   };
 
   return (
@@ -210,6 +216,9 @@ Berikan analisis mendalam:
             placeholder="Masukkan teks komunikasi untuk dianalisis melalui lensa budaya..."
             className="min-h-[100px] bg-secondary/30 border-border resize-none mb-3 text-sm"
           />
+          <div className="mb-3">
+            <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan gambar/screenshot komunikasi" />
+          </div>
           <Button onClick={analyzeWithCulture} disabled={loading || !testText.trim()}
             className={`w-full bg-gradient-to-r ${selectedCulture.color} hover:opacity-90 text-white rounded-xl`}
           >

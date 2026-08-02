@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Volume2, Brain, CheckCircle2, AlertTriangle, RefreshCw, Lightbulb, BookOpen, Send, ChevronRight, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import MediaUpload from '@/components/ai/MediaUpload';
 
 const PRACTICE_SENTENCES = [
   { id: 1, text: 'Maaf, boleh saya bertanya sedikit?', context: 'Meminta izin secara sopan', level: 'Pemula', category: 'Kesantunan' },
@@ -32,6 +33,7 @@ export default function AIPragmaticsTutor() {
   const [chatLoading, setChatLoading] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [chatFileUrls, setChatFileUrls] = useState([]);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -171,12 +173,16 @@ Berikan analisis mendalam dalam format JSON yang mencakup:
 
     const prompt = `Kamu adalah AI Tutor Pragmatik yang membantu mahasiswa meningkatkan kemampuan komunikasi etis. ${ctx}
 
-Pertanyaan mahasiswa: "${msg}"
+Pertanyaan mahasiswa: "${msg}"${chatFileUrls.length ? '\n\nCatatan: Mahasiswa melampirkan gambar/file untuk konteks tambahan. Analisis konten visual/dokumen yang terlampir jika relevan dengan pertanyaan.' : ''}
 
 Berikan jawaban yang edukatif, spesifik, dan mudah dipahami. Fokus pada pragmatik, intonasi, kesantunan, dan konteks sosial. Gunakan bahasa Indonesia yang ramah dan supportif.`;
 
-    const res = await base44.integrations.Core.InvokeLLM({ prompt });
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      ...(chatFileUrls.length ? { file_urls: chatFileUrls } : {}),
+    });
     setChatMessages(prev => [...prev, { role: 'assistant', content: res }]);
+    setChatFileUrls([]);
     setChatLoading(false);
   };
 
@@ -426,11 +432,12 @@ Berikan jawaban yang edukatif, spesifik, dan mudah dipahami. Fokus pada pragmati
               </div>
             </div>
 
-            <div className="p-4 border-t border-border">
-              <div className="flex gap-2">
+            <div className="p-4 border-t border-border space-y-2">
+              <MediaUpload fileUrls={chatFileUrls} onChange={setChatFileUrls} label="Lampirkan gambar/file" compact />
+              <div className="flex gap-2 items-center">
                 <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleChat()}
-                  placeholder="Tanya tentang intonasi, kesantunan..."
+                  placeholder="Tanya tentang intonasi, kesantunan... (boleh lampirkan gambar)"
                   className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground" />
                 <Button onClick={handleChat} disabled={chatLoading || !chatInput.trim()} size="icon"
                   className="bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-xl w-10 h-10 flex-shrink-0">

@@ -11,6 +11,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Responsi
 import { base44 } from '@/api/base44Client';
 import { buildAnalysisPrompt, buildChatPrompt } from '@/lib/aiPrompts';
 import ToxicityAlert from '@/components/ToxicityAlert';
+import MediaUpload from '@/components/ai/MediaUpload';
 
 const SCAFFOLDING_LEVELS = [
   { key: 'pemula', label: 'Pemula', color: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
@@ -44,6 +45,8 @@ export default function AIAnalyzer() {
   }]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [fileUrls, setFileUrls] = useState([]);
+  const [chatFileUrls, setChatFileUrls] = useState([]);
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -74,9 +77,16 @@ export default function AIAnalyzer() {
         academic_note: { type: 'string' }, knowledge_graph_path: { type: 'string' },
       }
     };
-    const res = await base44.integrations.Core.InvokeLLM({ prompt, response_json_schema: schema });
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt: fileUrls.length
+        ? `${prompt}\n\nCatatan: Gambar/file telah dilampirkan untuk konteks tambahan. Analisis juga konten visual/dokumen yang terlampir (mis. screenshot komentar, caption, meme, dokumen komunikasi) jika relevan dengan analisis pragmatik.`
+        : prompt,
+      response_json_schema: schema,
+      ...(fileUrls.length ? { file_urls: fileUrls } : {}),
+    });
     setResult(res);
     setLoading(false);
+    setFileUrls([]);
   };
 
   const handleChat = async () => {
@@ -88,10 +98,15 @@ export default function AIAnalyzer() {
     const ctx = result
       ? `Teks dianalisis: "${text}". Hasil: toxicity=${result.toxicity}%, kesantunan=${result.kesantunan}%, speech_act=${result.speech_act}, emotional_tone=${result.emotional_tone}`
       : '';
-    const prompt = buildChatPrompt(userMsg, ctx, scaffoldingLevel, chatMessages);
-    const res = await base44.integrations.Core.InvokeLLM({ prompt });
+    const prompt = buildChatPrompt(userMsg, ctx, scaffoldingLevel, chatMessages)
+      + (chatFileUrls.length ? '\n\nCatatan: Mahasiswa melampirkan gambar/file untuk konteks tambahan. Analisis konten visual/dokumen yang terlampir jika relevan dengan pertanyaan.' : '');
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      ...(chatFileUrls.length ? { file_urls: chatFileUrls } : {}),
+    });
     setChatMessages(prev => [...prev, { role: 'assistant', content: res }]);
     setChatLoading(false);
+    setChatFileUrls([]);
   };
 
   const radarData = result ? [
@@ -163,6 +178,9 @@ export default function AIAnalyzer() {
             <Textarea value={text} onChange={e => setText(e.target.value)}
               placeholder="Masukkan teks komunikasi digital (komentar, pesan, caption media sosial)..."
               className="min-h-[110px] bg-secondary/30 border-border resize-none text-sm" />
+            <div className="my-3">
+              <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan gambar/screenshot/dokumen komunikasi" />
+            </div>
             <ToxicityAlert text={text} threshold={50} />
             <div className="flex gap-3 flex-wrap">
               <Button onClick={handleAnalyze} disabled={loading || !text.trim()}
@@ -544,7 +562,8 @@ export default function AIAnalyzer() {
               </div>
             </div>
 
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border space-y-2">
+              <MediaUpload fileUrls={chatFileUrls} onChange={setChatFileUrls} label="Lampirkan gambar/file untuk AI" compact />
               <div className="flex gap-2">
                 <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleChat()}
