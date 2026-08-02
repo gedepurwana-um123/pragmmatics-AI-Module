@@ -179,7 +179,7 @@ Berikan jawaban yang edukatif, spesifik, dan mudah dipahami. Fokus pada pragmati
 
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
-      ...(chatFileUrls.length ? { file_urls: chatFileUrls } : {}),
+      ...(chatFileUrls.length ? { file_urls: chatFileUrls, model: 'gemini_3_flash' } : {}),
     });
     setChatMessages(prev => [...prev, { role: 'assistant', content: res }]);
     setChatFileUrls([]);

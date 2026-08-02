@@ -54,11 +54,12 @@ export default function AIAnalyzer() {
   }, [chatMessages, chatLoading]);
 
   const handleAnalyze = async () => {
-    if (!text.trim()) return;
+    if (!text.trim() && fileUrls.length === 0) return;
     setLoading(true);
     setResult(null);
     setActiveTab('analysis');
-    const prompt = buildAnalysisPrompt(text, scaffoldingLevel);
+    const hasAttachment = fileUrls.length > 0;
+    const prompt = buildAnalysisPrompt(text, scaffoldingLevel, hasAttachment);
     const schema = {
       type: 'object',
       properties: {
@@ -78,11 +79,9 @@ export default function AIAnalyzer() {
       }
     };
     const res = await base44.integrations.Core.InvokeLLM({
-      prompt: fileUrls.length
-        ? `${prompt}\n\nCatatan: Gambar/file telah dilampirkan untuk konteks tambahan. Analisis juga konten visual/dokumen yang terlampir (mis. screenshot komentar, caption, meme, dokumen komunikasi) jika relevan dengan analisis pragmatik.`
-        : prompt,
+      prompt,
       response_json_schema: schema,
-      ...(fileUrls.length ? { file_urls: fileUrls } : {}),
+      ...(fileUrls.length ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
     });
     setResult(res);
     setLoading(false);
@@ -180,10 +179,13 @@ export default function AIAnalyzer() {
               className="min-h-[110px] bg-secondary/30 border-border resize-none text-sm" />
             <div className="my-3">
               <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan gambar/screenshot/dokumen komunikasi" />
+              <p className="text-[10px] text-muted-foreground mt-1.5">
+                💡 Dua mode analisis: <strong>teks</strong> (ketik &amp; analisis) atau <strong>gambar/file</strong> (unggah screenshot komentar/meme/caption — AI akan membaca konten visual &amp; menilainya dengan etika budaya).
+              </p>
             </div>
             <ToxicityAlert text={text} threshold={50} />
             <div className="flex gap-3 flex-wrap">
-              <Button onClick={handleAnalyze} disabled={loading || !text.trim()}
+              <Button onClick={handleAnalyze} disabled={loading || (!text.trim() && fileUrls.length === 0)}
                 className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl px-6">
                 {loading ? <><RefreshCw className="w-4 h-4 animate-spin mr-2" />Menganalisis...</> : <><Zap className="w-4 h-4 mr-2" />Analisis AI</>}
               </Button>

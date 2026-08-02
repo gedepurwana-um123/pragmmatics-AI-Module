@@ -70,27 +70,32 @@ export default function CulturalWisdom() {
   }, []);
 
   const analyzeWithCulture = async () => {
-    if (!testText.trim()) return;
+    if (!testText.trim() && fileUrls.length === 0) return;
     setLoading(true);
     setWisdomResult(null);
-    const attachmentNote = fileUrls.length
-      ? `\n\nCatatan: Gambar/file telah dilampirkan untuk konteks tambahan. Analisis juga konten visual/dokumen yang terlampir jika relevan dengan komunikasi digital.`
+    const hasAttachment = fileUrls.length > 0;
+    const visionBlock = hasAttachment
+      ? `\n\nINSTRUKSI ANALISIS MEDIA (GAMBAR/FILE TERLAMPIR):\n- Periksa gambar/file yang dilampirkan dengan saksama. INI ADALAH OBJEK UTAMA ANALISIS, bukan teks perintah ini.\n- Baca dan transkripsikan teks/kalimat yang muncul dalam gambar (screenshot komentar, caption, pesan chat, meme, dll).\n- Deskripsikan konten visual: ekspresi, simbol, emoji, tone visual, dan konteks komunikasi yang tergambar.\n- JANGAN hanya merespons teks perintah — analisislah konten GAMBAR yang terlampir.\n- Terapkan nilai kearifan budaya ${selectedCulture.name} (${selectedCulture.prinsip}) terhadap komunikasi yang tergambar dalam gambar.`
       : '';
+    const objekAnalisis = (testText && testText.trim())
+      ? `Teks: "${testText}"`
+      : (hasAttachment ? 'Objek analisis utama: GAMBAR/FILE yang dilampirkan.' : 'Tidak ada teks yang diberikan.');
     const res = await base44.integrations.Core.InvokeLLM({
       prompt: `Kamu adalah Cultural Wisdom Recommendation Engine PragmaticsAI.
 
-Analisis teks komunikasi berikut menggunakan perspektif kearifan budaya lokal Sulawesi Tenggara (Tolaki/Mekongga, Muna, Buton).
+Analisis komunikasi berikut menggunakan perspektif kearifan budaya lokal Sulawesi Tenggara (Tolaki/Mekongga, Muna, Buton).${visionBlock}
 
-Teks: "${testText}"
+${objekAnalisis}
 Fokus budaya saat ini: ${selectedCulture.name}
 Prinsip: ${selectedCulture.prinsip}
 
 Berikan analisis mendalam:
-1. Apakah teks ini selaras atau bertentangan dengan nilai budaya ${selectedCulture.name}?
+1. Apakah komunikasi ini selaras atau bertentangan dengan nilai budaya ${selectedCulture.name}?
 2. Bagaimana perspektif budaya ${selectedCulture.name} memandang komunikasi seperti ini?
 3. Rekomendasi spesifik berbasis nilai ${selectedCulture.prinsip}
 4. Versi alternatif yang mencerminkan nilai budaya tersebut
-5. Pelajaran pragmatik etnografi yang dapat dipetik${attachmentNote}`,
+5. Pelajaran pragmatik etnografi yang dapat dipetik`,
+      ...(hasAttachment ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
       response_json_schema: {
         type: 'object',
         properties: {
@@ -219,7 +224,7 @@ Berikan analisis mendalam:
           <div className="mb-3">
             <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan gambar/screenshot komunikasi" />
           </div>
-          <Button onClick={analyzeWithCulture} disabled={loading || !testText.trim()}
+          <Button onClick={analyzeWithCulture} disabled={loading || (!testText.trim() && fileUrls.length === 0)}
             className={`w-full bg-gradient-to-r ${selectedCulture.color} hover:opacity-90 text-white rounded-xl`}
           >
             {loading ? <><RefreshCw className="w-4 h-4 animate-spin mr-2" />Menganalisis...</> : <><Sparkles className="w-4 h-4 mr-2" />Analisis dengan Kearifan {selectedCulture.name}</>}

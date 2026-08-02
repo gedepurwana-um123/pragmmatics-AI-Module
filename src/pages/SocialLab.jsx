@@ -80,11 +80,11 @@ export default function SocialLab() {
     setLoading(true);
     setAnalysis(null);
     setRewrite('');
-    const prompt = buildSocialLabPrompt(comment.text, platform, scaffoldingLevel)
-      + (fileUrls.length ? '\n\nCatatan: Gambar/screenshot media sosial telah dilampirkan. Analisis juga konten visual (caption, komentar, meme, atau konteks gambar) yang terlampir jika relevan.' : '');
+    const hasAttachment = fileUrls.length > 0;
+    const prompt = buildSocialLabPrompt(comment.text, platform, scaffoldingLevel, hasAttachment);
     const res = await base44.integrations.Core.InvokeLLM({
       prompt,
-      ...(fileUrls.length ? { file_urls: fileUrls } : {}),
+      ...(fileUrls.length ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
       response_json_schema: {
         type: 'object',
         properties: {
@@ -106,7 +106,7 @@ export default function SocialLab() {
   };
 
   const analyzeCustom = async () => {
-    if (!customText.trim()) return;
+    if (!customText.trim() && fileUrls.length === 0) return;
     await analyzeComment({ user: 'Input Kustom', text: customText, likes: 0, tags: [] });
   };
 
@@ -231,7 +231,7 @@ Berikan HANYA versi yang sudah diperbaiki (tanpa penjelasan) dalam bahasa Indone
                   <div className="mb-3">
                     <MediaUpload fileUrls={fileUrls} onChange={setFileUrls} label="Lampirkan screenshot/komentar media sosial" />
                   </div>
-                  <Button onClick={analyzeCustom} disabled={loading || !customText.trim()} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl text-sm">
+                  <Button onClick={analyzeCustom} disabled={loading || (!customText.trim() && fileUrls.length === 0)} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl text-sm">
                     {loading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <BarChart3 className="w-4 h-4 mr-2" />}Analisis Sekarang
                   </Button>
                 </motion.div>

@@ -59,13 +59,23 @@ export const CULTURAL_WISDOM_PROMPTS = {
 - Contoh: "Dalam budaya Buton, setiap komunikasi harus menjaga martabat semua pihak yang terlibat."`,
 };
 
-export const buildAnalysisPrompt = (text, scaffoldingLevel = 'menengah') => `
+export const VISION_ANALYSIS_INSTRUCTION = `INSTRUKSI ANALISIS MEDIA (GAMBAR/FILE TERLAMPIR):
+- Periksa gambar/file yang dilampirkan dengan saksama. INI ADALAH OBJEK UTAMA ANALISIS, bukan teks perintah ini.
+- Baca dan transkripsikan teks/kalimat yang muncul dalam gambar (screenshot komentar, caption, pesan chat, meme, dll.).
+- Deskripsikan konten visual: ekspresi, simbol, emoji, tone visual, dan konteks komunikasi yang tergambar.
+- JANGAN hanya merespons teks perintah — analisislah konten GAMBAR yang terlampir.
+- Terapkan kerangka pragmatik (speech acts, Grice, Brown-Levinson, Leech) dan kearifan budaya Sulawesi Tenggara (Tolaki/Muna/Buton) terhadap komunikasi yang tergambar dalam gambar.
+- Jika gambar tidak mengandung komunikasi yang dapat dianalisis, jelaskan apa yang Anda lihat dan berikan penilaian umum berbasis etika digital.`;
+
+export const buildAnalysisPrompt = (text, scaffoldingLevel = 'menengah', hasAttachment = false) => `
 ${AI_IDENTITY}
 
 ${SCAFFOLDING_PROMPTS[scaffoldingLevel] || SCAFFOLDING_PROMPTS.menengah}
 
+${hasAttachment ? VISION_ANALYSIS_INSTRUCTION : ''}
+
 TUGAS — ANALISIS PRAGMATIK KOMPREHENSIF:
-Teks: "${text}"
+${text && text.trim() ? `Teks input: "${text}"` : (hasAttachment ? 'Objek analisis utama: GAMBAR/FILE yang dilampirkan (lihat instruksi analisis media di atas).' : 'Tidak ada teks yang diberikan.')}
 
 Lakukan analisis mendalam berdasarkan:
 1. Pragmatic Knowledge Graph (speech acts → implicature → politeness → toxicity → cultural values → ethics)
@@ -146,14 +156,16 @@ Berikan umpan balik sebagai mentor reflektif yang:
 Panjang: 200-350 kata. Gunakan bahasa yang hangat namun akademis.
 `;
 
-export const buildSocialLabPrompt = (text, platform, scaffoldingLevel = 'menengah') => `
+export const buildSocialLabPrompt = (text, platform, scaffoldingLevel = 'menengah', hasAttachment = false) => `
 ${AI_IDENTITY}
 
 ${SCAFFOLDING_PROMPTS[scaffoldingLevel] || SCAFFOLDING_PROMPTS.menengah}
 
+${hasAttachment ? VISION_ANALYSIS_INSTRUCTION : ''}
+
 DIGITAL ETHICS SIMULATION ENGINE — ANALISIS KOMENTAR MEDIA SOSIAL:
 Platform: ${platform}
-Komentar: "${text}"
+Objek analisis: ${text && text.trim() ? `"${text}"` : (hasAttachment ? 'GAMBAR/FILE yang dilampirkan (analisis konten visual sesuai instruksi analisis media)' : 'tidak ada')}
 
 KNOWLEDGE GRAPH ANALYSIS — Telusuri jalur:
 Teks → Deteksi Emosi → Speech Act → Face Threat Analysis → Politeness/Impoliteness → Implikatur → Nilai Kultural → Rekomendasi Etis
