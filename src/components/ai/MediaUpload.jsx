@@ -1,23 +1,61 @@
 import React, { useState, useRef } from 'react';
-import { X, FileText, Loader2, Paperclip } from 'lucide-react';
+import { X, FileText, Loader2, Paperclip, ImageDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|bmp|svg)$/i;
+const MAX_DIMENSION = 1600; // px
+const JPEG_QUALITY = 0.85;
+const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB guard
 
 function isImageUrl(url = '') {
   return IMAGE_RE.test(url) || /image\//i.test(url) || url.includes('/images/');
 }
 
 /**
+ * Compress/resize an image File through a canvas before upload.
+ * Returns a File (JPEG) when compression is useful, otherwise the original.
+ */
+async function compressImage(file) {
+  if (!file.type.startsWith('image/')) return file;
+  // Skip SVG/GIF (can't meaningfully recompress via canvas)
+  if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file;
+  try {
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = reject;
+      i.src = dataUrl;
+    });
+    const { width, height } = img;
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
+    if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return file; // small enough already
+    const w = Math.round(width * scale);
+    const h = Math.round(height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY)
+    );
+    if (!blob) return file;
+    const safeName = (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
+    return new File([blob], safeName, { type: 'image/jpeg' });
+  } catch {
+    return file; // fallback to original if compression fails
+  }
+}
+
+/**
  * Reusable media/file uploader for AI analysis features.
  * Uploads files via Core.UploadFile and exposes the resulting URLs to the parent.
- *
- * Props:
- *  - fileUrls: string[]           current attached file URLs
- *  - onChange: (urls[]) => void    callback when attachments change
- *  - label?: string               button label
- *  - compact?: boolean            tighter layout for chat bars
- *  - accept?: string              input accept attribute
  */
 export default function MediaUpload({
   fileUrls = [],
@@ -32,17 +70,27 @@ export default function MediaUpload({
 
   const handleFiles = async (files) => {
     if (!files || files.length === 0) return;
-    setUploading(true);
     setError('');
+    // Size guard
+    const oversized = Array.from(files).filter((f) => f.size > MAX_FILE_SIZE);
+    if (oversized.length) {
+      setError(`Ukuran file melebihi ${MAX_FILE_SIZE / 1024 / 1024}MB. Kecilkan/ukur ulang dahulu.`);
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+    setUploading(true);
     try {
       const uploaded = [];
       for (const file of Array.from(files)) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const prepared = await compressImage(file);
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
         if (file_url) uploaded.push(file_url);
       }
       if (uploaded.length) onChange([...fileUrls, ...uploaded]);
+      else setError('Unggah selesai tetapi tidak ada URL file yang dikembalikan.');
     } catch (e) {
-      setError('Gagal mengunggah file. Coba lagi.');
+      const detail = e?.message || e?.error || e?.details || (typeof e === 'string' ? e : 'Gagal mengunggah file.');
+      setError(`Gagal mengunggah: ${detail}`);
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = '';
@@ -72,7 +120,10 @@ export default function MediaUpload({
           onChange={(e) => handleFiles(e.target.files)}
         />
         {fileUrls.length > 0 && (
-          <span className="text-[10px] text-muted-foreground">{fileUrls.length} file terlampir untuk analisis AI</span>
+          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+            <ImageDown className="w-3 h-3" />
+            {fileUrls.length} file terlampir untuk analisis AI
+          </span>
         )}
       </div>
 
