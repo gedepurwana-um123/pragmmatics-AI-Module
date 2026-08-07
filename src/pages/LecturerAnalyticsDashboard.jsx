@@ -15,6 +15,7 @@ import StudentAnalyticsTable from '@/components/lecturer/StudentAnalyticsTable';
 import ClassSelector from '@/components/lecturer/ClassSelector';
 import LecturerNotificationPanel from '@/components/lecturer/LecturerNotificationPanel';
 import ClassLeaderboard from '@/components/dashboard/ClassLeaderboard';
+import ClassComparisonChart from '@/components/lecturer/ClassComparisonChart';
 
 const tooltipStyle = { backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px', fontSize: 12 };
 
@@ -58,13 +59,28 @@ export default function LecturerAnalyticsDashboard() {
     : 0;
   const totalInteractions = enrollments.reduce((a, e) => a + (e.total_ai_interactions || 0), 0);
 
-  // Chart data dari scores
-  const trendData = scores.slice(-7).map((s, i) => ({
-    date: new Date(s.date || s.created_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-    pragmatik: s.pragmatic_competence || 0,
-    kesantunan: s.politeness_score || 0,
-    toxicity: s.toxicity_score || 0,
-  }));
+  // Tren kolektif per tanggal — rata-rata seluruh mahasiswa per tanggal
+  const trendData = (() => {
+    const byKey = {};
+    scores.forEach((s) => {
+      const d = s.date || s.created_date;
+      if (!d) return;
+      const iso = new Date(d).toISOString().slice(0, 10);
+      if (!byKey[iso]) byKey[iso] = { pragmatik: [], kesantunan: [], toxicity: [] };
+      byKey[iso].pragmatik.push(s.pragmatic_competence || 0);
+      byKey[iso].kesantunan.push(s.politeness_score || 0);
+      byKey[iso].toxicity.push(s.toxicity_score || 0);
+    });
+    return Object.entries(byKey)
+      .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+      .slice(-10)
+      .map(([iso, v]) => ({
+        date: new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+        pragmatik: Math.round(v.pragmatik.reduce((a, x) => a + x, 0) / v.pragmatik.length),
+        kesantunan: Math.round(v.kesantunan.reduce((a, x) => a + x, 0) / v.kesantunan.length),
+        toxicity: Math.round(v.toxicity.reduce((a, x) => a + x, 0) / v.toxicity.length),
+      }));
+  })();
 
   const radarData = [
     { subject: 'Pragmatik', value: avgPragmatic || 75 },
@@ -166,8 +182,8 @@ export default function LecturerAnalyticsDashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="lg:col-span-2 bg-white rounded-2xl p-6 border border-border shadow-sm"
         >
-          <h3 className="font-semibold font-montserrat mb-1">Tren Perkembangan Kelas</h3>
-          <p className="text-xs text-muted-foreground mb-4">Pragmatik, kesantunan, dan toxicity mahasiswa</p>
+          <h3 className="font-semibold font-montserrat mb-1">Tren Perkembangan Kolektif Kelas</h3>
+          <p className="text-xs text-muted-foreground mb-4">Rata-rata kompetensi pragmatik & kesantunan seluruh mahasiswa per tanggal</p>
           {trendData.length > 0 ? (
             <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
@@ -211,6 +227,9 @@ export default function LecturerAnalyticsDashboard() {
           </div>
         </motion.div>
       </div>
+
+      {/* Cross-class comparison */}
+      <ClassComparisonChart classes={classes} lecturerEmail={currentUser?.email} />
 
       {/* Notification Panel + Student Table */}
       <div className="grid lg:grid-cols-3 gap-6">

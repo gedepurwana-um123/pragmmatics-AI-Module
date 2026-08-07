@@ -47,6 +47,7 @@ export default function AIAnalyzer() {
   const [chatLoading, setChatLoading] = useState(false);
   const [fileUrls, setFileUrls] = useState([]);
   const [chatFileUrls, setChatFileUrls] = useState([]);
+  const [analyzeError, setAnalyzeError] = useState('');
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -78,18 +79,24 @@ export default function AIAnalyzer() {
         academic_note: { type: 'string' }, knowledge_graph_path: { type: 'string' },
       }
     };
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      response_json_schema: schema,
-      ...(fileUrls.length ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
-    });
-    setResult(res);
-    setLoading(false);
-    setFileUrls([]);
+    setAnalyzeError('');
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: schema,
+        ...(fileUrls.length ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
+      });
+      setResult(res);
+      setFileUrls([]);
+    } catch (e) {
+      setAnalyzeError(e?.message || e?.error || e?.details || 'Gagal menganalisis. Periksa koneksi dan coba lagi.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChat = async () => {
-    if (!chatInput.trim()) return;
+    if (!chatInput.trim() && chatFileUrls.length === 0) return;
     const userMsg = chatInput;
     setChatMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setChatInput('');
@@ -99,13 +106,18 @@ export default function AIAnalyzer() {
       : '';
     const prompt = buildChatPrompt(userMsg, ctx, scaffoldingLevel, chatMessages)
       + (chatFileUrls.length ? '\n\nCatatan: Mahasiswa melampirkan gambar/file untuk konteks tambahan. Analisis konten visual/dokumen yang terlampir jika relevan dengan pertanyaan.' : '');
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      ...(chatFileUrls.length ? { file_urls: chatFileUrls } : {}),
-    });
-    setChatMessages(prev => [...prev, { role: 'assistant', content: res }]);
-    setChatLoading(false);
-    setChatFileUrls([]);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        ...(chatFileUrls.length ? { file_urls: chatFileUrls, model: 'gemini_3_flash' } : {}),
+      });
+      setChatMessages(prev => [...prev, { role: 'assistant', content: res }]);
+      setChatFileUrls([]);
+    } catch (e) {
+      setChatMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi atau periksa koneksi Anda.' }]);
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   const radarData = result ? [
@@ -221,6 +233,18 @@ export default function AIAnalyzer() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Error */}
+          {analyzeError && !loading && (
+            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-rose-700">Analisis gagal</p>
+                <p className="text-xs text-rose-600 mt-1">{analyzeError}</p>
+                <p className="text-[11px] text-rose-500 mt-1.5">Pastikan teks/gambar terisi dan koneksi stabil. Untuk gambar, AI memakai model vision — coba unggah ulang jika perlu.</p>
+              </div>
+            </div>
+          )}
 
           {/* Results */}
           <AnimatePresence>
@@ -572,7 +596,7 @@ export default function AIAnalyzer() {
                   placeholder="Tanya tentang pragmatik, budaya, etika..."
                   className="flex-1 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 text-foreground placeholder:text-muted-foreground"
                 />
-                <Button onClick={handleChat} disabled={chatLoading || !chatInput.trim()} size="icon"
+                <Button onClick={handleChat} disabled={chatLoading || (!chatInput.trim() && chatFileUrls.length === 0)} size="icon"
                   className="bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl w-10 h-10 flex-shrink-0">
                   <Send className="w-4 h-4" />
                 </Button>
