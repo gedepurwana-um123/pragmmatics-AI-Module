@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { Globe, Sparkles, BookOpen, Brain, Shield, RefreshCw, ChevronRight, MessageSquare, Zap } from 'lucide-react';
+import { Globe, Sparkles, BookOpen, Brain, Shield, RefreshCw, ChevronRight, MessageSquare, Zap, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import MediaUpload from '@/components/ai/MediaUpload';
@@ -62,6 +62,7 @@ export default function CulturalWisdom() {
   const [loading, setLoading] = useState(false);
   const [dbRecommendations, setDbRecommendations] = useState([]);
   const [fileUrls, setFileUrls] = useState([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     base44.entities.CulturalRecommendation.filter({ is_active: true })
@@ -73,6 +74,7 @@ export default function CulturalWisdom() {
     if (!testText.trim() && fileUrls.length === 0) return;
     setLoading(true);
     setWisdomResult(null);
+    setError('');
     const hasAttachment = fileUrls.length > 0;
     const visionBlock = hasAttachment
       ? `\n\nINSTRUKSI ANALISIS MEDIA (GAMBAR/FILE TERLAMPIR):\n- Periksa gambar/file yang dilampirkan dengan saksama. INI ADALAH OBJEK UTAMA ANALISIS, bukan teks perintah ini.\n- Baca dan transkripsikan teks/kalimat yang muncul dalam gambar (screenshot komentar, caption, pesan chat, meme, dll).\n- Deskripsikan konten visual: ekspresi, simbol, emoji, tone visual, dan konteks komunikasi yang tergambar.\n- JANGAN hanya merespons teks perintah — analisislah konten GAMBAR yang terlampir.\n- Terapkan nilai kearifan budaya ${selectedCulture.name} (${selectedCulture.prinsip}) terhadap komunikasi yang tergambar dalam gambar.`
@@ -80,6 +82,7 @@ export default function CulturalWisdom() {
     const objekAnalisis = (testText && testText.trim())
       ? `Teks: "${testText}"`
       : (hasAttachment ? 'Objek analisis utama: GAMBAR/FILE yang dilampirkan.' : 'Tidak ada teks yang diberikan.');
+    try {
     const res = await base44.integrations.Core.InvokeLLM({
       prompt: `Kamu adalah Cultural Wisdom Recommendation Engine PragmaticsAI.
 
@@ -110,8 +113,17 @@ Berikan analisis mendalam:
       }
     });
     setWisdomResult(res);
-    setLoading(false);
     setFileUrls([]);
+    } catch (e) {
+      const msg = e?.message || e?.error || e?.details || 'Gagal menganalisis. Coba lagi nanti.';
+      if (/limit of integrations|upgrade your plan/i.test(msg)) {
+        setError('Kuota AI bulanan telah habis. Hubungi admin untuk upgrade paket PragmaticsAI agar analisis AI kembali tersedia.');
+      } else {
+        setError(msg);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -241,6 +253,17 @@ Berikan analisis mendalam:
                 <span className="text-4xl mb-4 animate-pulse">{selectedCulture.icon}</span>
                 <p className="text-sm font-semibold text-foreground">Cultural Wisdom Engine bekerja...</p>
                 <p className="text-xs text-muted-foreground mt-1">Mengintegrasikan nilai {selectedCulture.name}</p>
+              </motion.div>
+            )}
+
+            {error && !loading && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="bg-rose-50 border border-rose-200 rounded-2xl p-5 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-sm text-rose-700">Analisis gagal</p>
+                  <p className="text-xs text-rose-600 mt-1">{error}</p>
+                </div>
               </motion.div>
             )}
 
