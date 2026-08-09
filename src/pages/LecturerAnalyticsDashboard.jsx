@@ -16,6 +16,7 @@ import ClassSelector from '@/components/lecturer/ClassSelector';
 import LecturerNotificationPanel from '@/components/lecturer/LecturerNotificationPanel';
 import ClassLeaderboard from '@/components/dashboard/ClassLeaderboard';
 import ClassComparisonChart from '@/components/lecturer/ClassComparisonChart';
+import ClassTrendComparisonChart from '@/components/lecturer/ClassTrendComparisonChart';
 
 const tooltipStyle = { backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px 12px', fontSize: 12 };
 
@@ -230,6 +231,9 @@ export default function LecturerAnalyticsDashboard() {
 
       {/* Cross-class comparison */}
       <ClassComparisonChart classes={classes} lecturerEmail={currentUser?.email} />
+
+      {/* Interactive cross-class trend comparison */}
+      <ClassTrendComparisonChart classes={classes} lecturerEmail={currentUser?.email} />
 
       {/* Notification Panel + Student Table */}
       <div className="grid lg:grid-cols-3 gap-6">

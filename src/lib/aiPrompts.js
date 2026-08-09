@@ -67,6 +67,34 @@ export const VISION_ANALYSIS_INSTRUCTION = `INSTRUKSI ANALISIS MEDIA (GAMBAR/FIL
 - Terapkan kerangka pragmatik (speech acts, Grice, Brown-Levinson, Leech) dan kearifan budaya Sulawesi Tenggara (Tolaki/Muna/Buton) terhadap komunikasi yang tergambar dalam gambar.
 - Jika gambar tidak mengandung komunikasi yang dapat dianalisis, jelaskan apa yang Anda lihat dan berikan penilaian umum berbasis etika digital.`;
 
+/**
+ * Mode-aware input descriptor — ensures the AI differentiates and accurately
+ * processes text-only, image-only, and combined text+image inputs so the
+ * cultural-ethics feedback always matches the actual content provided.
+ */
+export const buildInputModeDescriptor = (text, hasAttachment) => {
+  const hasText = !!(text && String(text).trim());
+  if (hasText && hasAttachment) {
+    return `MODE ANALISIS: TEKS + GAMBAR
+- Teks yang diketik: "${text}"
+- Media yang dilampirkan: gambar/file (lihat INSTRUKSI ANALISIS MEDIA di atas).
+INSTRUKSI PENTING: Analisis KEDUA input secara bersamaan dan saling melengkapi. Transkripsikan teks yang muncul di dalam gambar, lalu evaluasi komunikasi dari teks DAN gambar sebagai satu kesatuan. JANGAN hanya merespons teks perintah atau mengabaikan salah satu input. Jika teks berperan sebagai caption/komentar dan gambar sebagai konteks, pertimbangkan relasi keduanya. Umpan balik etika budaya WAJIB relevan dengan substansi komunikasi yang benar-benar muncul pada teks dan/atau gambar.`;
+  }
+  if (hasAttachment) {
+    return `MODE ANALISIS: GAMBAR/FILE SAJA
+- Tidak ada teks yang diketik.
+- Media yang dilampirkan: gambar/file (lihat INSTRUKSI ANALISIS MEDIA di atas).
+INSTRUKSI PENTING: Objek analisis utama adalah GAMBAR. Transkripsikan teks/kalimat yang muncul dalam gambar, deskripsikan konten visual (ekspresi, simbol, emoji, tone), lalu evaluasi komunikasi yang tergambar. Umpan balik etika budaya WAJIB relevan dengan substansi komunikasi dalam gambar, bukan teks perintah ini.`;
+  }
+  if (hasText) {
+    return `MODE ANALISIS: TEKS SAJA
+- Teks input: "${text}"
+- Tidak ada media yang dilampirkan.
+INSTRUKSI: Analisis teks di atas sepenuhnya. Umpan balik etika budaya harus relevan dengan substansi teks.`;
+  }
+  return 'Tidak ada teks atau media yang diberikan untuk dianalisis.';
+};
+
 export const buildAnalysisPrompt = (text, scaffoldingLevel = 'menengah', hasAttachment = false) => `
 ${AI_IDENTITY}
 
@@ -75,7 +103,7 @@ ${SCAFFOLDING_PROMPTS[scaffoldingLevel] || SCAFFOLDING_PROMPTS.menengah}
 ${hasAttachment ? VISION_ANALYSIS_INSTRUCTION : ''}
 
 TUGAS — ANALISIS PRAGMATIK KOMPREHENSIF:
-${text && text.trim() ? `Teks input: "${text}"` : (hasAttachment ? 'Objek analisis utama: GAMBAR/FILE yang dilampirkan (lihat instruksi analisis media di atas).' : 'Tidak ada teks yang diberikan.')}
+${buildInputModeDescriptor(text, hasAttachment)}
 
 Lakukan analisis mendalam berdasarkan:
 1. Pragmatic Knowledge Graph (speech acts → implicature → politeness → toxicity → cultural values → ethics)
@@ -165,7 +193,7 @@ ${hasAttachment ? VISION_ANALYSIS_INSTRUCTION : ''}
 
 DIGITAL ETHICS SIMULATION ENGINE — ANALISIS KOMENTAR MEDIA SOSIAL:
 Platform: ${platform}
-Objek analisis: ${text && text.trim() ? `"${text}"` : (hasAttachment ? 'GAMBAR/FILE yang dilampirkan (analisis konten visual sesuai instruksi analisis media)' : 'tidak ada')}
+${buildInputModeDescriptor(text, hasAttachment)}
 
 KNOWLEDGE GRAPH ANALYSIS — Telusuri jalur:
 Teks → Deteksi Emosi → Speech Act → Face Threat Analysis → Politeness/Impoliteness → Implikatur → Nilai Kultural → Rekomendasi Etis
