@@ -80,12 +80,24 @@ export default function AIAnalyzer() {
       }
     };
     setAnalyzeError('');
+    // Retry once on multi-modal (image) calls to absorb intermittent vision-model failures
+    const callLLM = async (payload, allowRetry) => {
+      try {
+        return await base44.integrations.Core.InvokeLLM(payload);
+      } catch (e) {
+        if (allowRetry && payload.file_urls) {
+          return await base44.integrations.Core.InvokeLLM(payload);
+        }
+        throw e;
+      }
+    };
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const payload = {
         prompt,
         response_json_schema: schema,
         ...(fileUrls.length ? { file_urls: fileUrls, model: 'gemini_3_flash' } : {}),
-      });
+      };
+      const res = await callLLM(payload, fileUrls.length > 0);
       setResult(res);
       setFileUrls([]);
     } catch (e) {

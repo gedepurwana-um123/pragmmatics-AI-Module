@@ -6,6 +6,7 @@ const IMAGE_RE = /\.(png|jpe?g|gif|webp|bmp|svg)$/i;
 const MAX_DIMENSION = 1600; // px
 const JPEG_QUALITY = 0.85;
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB guard
+const TARGET_IMAGE_SIZE = 3 * 1024 * 1024; // keep compressed images under 3MB
 
 function isImageUrl(url = '') {
   return IMAGE_RE.test(url) || /image\//i.test(url) || url.includes('/images/');
@@ -15,43 +16,80 @@ function isImageUrl(url = '') {
  * Compress/resize an image File through a canvas before upload.
  * Returns a File (JPEG) when compression is useful, otherwise the original.
  */
+const readAsDataURL = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+const loadImage = (src) =>
+  new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = src;
+  });
+
+const canvasToBlob = (canvas, type, quality) =>
+  new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+
+/**
+ * Compress/resize an image File through a canvas before upload.
+ * Progressively shrinks dimensions and quality until the result fits
+ * TARGET_IMAGE_SIZE, so large camera images never fail to upload.
+ * Returns the smallest produced File (JPEG), or the original on failure.
+ */
 async function compressImage(file) {
   if (!file.type.startsWith('image/')) return file;
   // Skip SVG/GIF (can't meaningfully recompress via canvas)
   if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file;
   try {
-    const dataUrl = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-    const img = await new Promise((resolve, reject) => {
-      const i = new Image();
-      i.onload = () => resolve(i);
-      i.onerror = reject;
-      i.src = dataUrl;
-    });
+    const dataUrl = await readAsDataURL(file);
+    const img = await loadImage(dataUrl);
     const { width, height } = img;
-    const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
-    if (scale === 1 && file.size <= 1.5 * 1024 * 1024) return file; // small enough already
-    const w = Math.round(width * scale);
-    const h = Math.round(height * scale);
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, w, h);
-    const blob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY)
-    );
-    if (!blob) return file;
+    let scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
     const safeName = (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
-    return new File([blob], safeName, { type: 'image/jpeg' });
+    let best = file;
+    for (let attempt = 0; attempt < 3 && scale > 0.05; attempt++) {
+      const w = Math.max(1, Math.round(width * scale));
+      const h = Math.max(1, Math.round(height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const quality = Math.max(0.5, JPEG_QUALITY - attempt * 0.12);
+      const blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+      if (!blob) break;
+      const candidate = new File([blob], safeName, { type: 'image/jpeg' });
+      if (candidate.size < best.size) best = candidate;
+      if (candidate.size <= TARGET_IMAGE_SIZE) break;
+      scale *= 0.65; // shrink further if still too large
+    }
+    return best;
   } catch {
-    return file; // fallback to original if compression fails
+    return file; // fallback to original if compression fails (e.g. HEIC on Chrome)
   }
 }
+
+/**
+ * Upload a single file with one automatic retry to absorb transient
+ * network/server hiccups. Returns the file_url or null.
+ */
+const uploadWithRetry = async (file) => {
+  let lastErr = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      if (file_url) return file_url;
+    } catch (e) {
+      lastErr = e;
+    }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, 600));
+  }
+  return null;
+};
 
 /**
  * Reusable media/file uploader for AI analysis features.
@@ -81,13 +119,21 @@ export default function MediaUpload({
     setUploading(true);
     try {
       const uploaded = [];
+      const failed = [];
       for (const file of Array.from(files)) {
         const prepared = await compressImage(file);
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
-        if (file_url) uploaded.push(file_url);
+        const url = await uploadWithRetry(prepared);
+        if (url) uploaded.push(url);
+        else failed.push(file.name || 'file');
       }
       if (uploaded.length) onChange([...fileUrls, ...uploaded]);
-      else setError('Unggah selesai tetapi tidak ada URL file yang dikembalikan.');
+      if (failed.length && !uploaded.length) {
+        setError(`Gagal mengunggah ${failed.length} file setelah percobaan ulang. Coba perkecil ukuran atau ganti format (JPG/PNG).`);
+      } else if (failed.length) {
+        setError(`Sebagian file gagal diunggah: ${failed.join(', ')}. File lain berhasil.`);
+      } else if (!uploaded.length) {
+        setError('Unggah selesai tetapi tidak ada URL file yang dikembalikan.');
+      }
     } catch (e) {
       const detail = e?.message || e?.error || e?.details || (typeof e === 'string' ? e : 'Gagal mengunggah file.');
       setError(`Gagal mengunggah: ${detail}`);

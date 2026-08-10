@@ -78,7 +78,11 @@ export const buildInputModeDescriptor = (text, hasAttachment) => {
     return `MODE ANALISIS: TEKS + GAMBAR
 - Teks yang diketik: "${text}"
 - Media yang dilampirkan: gambar/file (lihat INSTRUKSI ANALISIS MEDIA di atas).
-INSTRUKSI PENTING: Analisis KEDUA input secara bersamaan dan saling melengkapi. Transkripsikan teks yang muncul di dalam gambar, lalu evaluasi komunikasi dari teks DAN gambar sebagai satu kesatuan. JANGAN hanya merespons teks perintah atau mengabaikan salah satu input. Jika teks berperan sebagai caption/komentar dan gambar sebagai konteks, pertimbangkan relasi keduanya. Umpan balik etika budaya WAJIB relevan dengan substansi komunikasi yang benar-benar muncul pada teks dan/atau gambar.`;
+INSTRUKSI PENTING — PEMROSESAN TERPISAH LALU SINTESIS:
+1. Baca dan analisis GAMBAR secara terpisah terlebih dahulu: transkripsikan teks/kalimat yang muncul di dalam gambar, deskripsikan konten visual (ekspresi, simbol, emoji, tone), dan tentukan komunikasi yang tergambar.
+2. Baca dan analisis TEKS yang diketik secara terpisah: identifikasi speech act, implikatur, tone, dan ancaman muka dari teks tersebut.
+3. SINTESIS: gabungkan temuan dari langkah 1 dan 2. Jika teks dan gambar membahas hal yang sama, evaluasi sebagai kesatuan; jika keduanya berbeda, nilai masing-masing secara akurat dan jelaskan keduanya.
+JANGAN mengarang konten yang tidak ada di teks maupun gambar. Umpan balik etika budaya WAJIB relevan dengan substansi komunikasi yang benar-benar muncul pada teks dan/atau gambar.`;
   }
   if (hasAttachment) {
     return `MODE ANALISIS: GAMBAR/FILE SAJA
