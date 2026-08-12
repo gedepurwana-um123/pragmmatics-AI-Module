@@ -8,12 +8,12 @@ import MediaUpload from '@/components/ai/MediaUpload';
 
 const CULTURES = [
   {
-    id: 'tolaki', name: 'Tolaki / Mekongga', icon: '🏔️', region: 'Konawe, Kolaka',
+    id: 'tolaki', name: 'Tolaki Mekongga', icon: '🏔️', region: 'Konawe, Kolaka',
     color: 'from-amber-500 to-orange-600', bg: 'bg-amber-50 border-amber-200',
     textColor: 'text-amber-700',
     prinsip: 'Mombesara — Penghormatan & Harmoni Sosial',
     nilai: ['Penghormatan (Mombesara)', 'Harmoni Sosial (Sara)', 'Menjaga Martabat', 'Komunikasi Kolektif', 'Penghargaan Lawan Bicara'],
-    etika: 'Dalam budaya Tolaki/Mekongga, komunikasi yang baik selalu mengutamakan penghormatan dan menjaga keharmonisan sosial. Kritik disampaikan secara personal untuk menjaga harga diri.',
+    etika: 'Dalam budaya Tolaki Mekongga, komunikasi yang baik selalu mengutamakan penghormatan dan menjaga keharmonisan sosial. Kritik disampaikan secara personal untuk menjaga harga diri.',
     larangan: 'Mengkritik secara langsung di depan umum, merendahkan status sosial, komunikasi yang memecah harmoni komunitas.',
     contoh_baik: '"Maaf, boleh saya menyampaikan pendapat secara langsung? Saya pikir ada perspektif lain yang perlu dipertimbangkan."',
     contoh_buruk: '"Komentar kamu tidak masuk akal sama sekali!"',
@@ -86,7 +86,7 @@ export default function CulturalWisdom() {
     const res = await base44.integrations.Core.InvokeLLM({
       prompt: `Kamu adalah Cultural Wisdom Recommendation Engine PragmaticsAI.
 
-Analisis komunikasi berikut menggunakan perspektif kearifan budaya lokal Sulawesi Tenggara (Tolaki/Mekongga, Muna, Buton).${visionBlock}
+Analisis komunikasi berikut menggunakan perspektif kearifan budaya lokal Sulawesi Tenggara (Tolaki Mekongga, Muna, Buton).${visionBlock}
 
 ${objekAnalisis}
 Fokus budaya saat ini: ${selectedCulture.name}
@@ -320,7 +320,7 @@ Berikan analisis mendalam:
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-border">
-                {['Dimensi', '🏔️ Tolaki/Mekongga', '🌊 Muna', '⚓ Buton'].map(h => (
+                {['Dimensi', '🏔️ Tolaki Mekongga', '🌊 Muna', '⚓ Buton'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">{h}</th>
                 ))}
               </tr>

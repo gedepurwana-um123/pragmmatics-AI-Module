@@ -10,7 +10,7 @@ import {
 
 const CULTURAL_DB = {
   tolaki: {
-    name: 'Tolaki / Mekongga',
+    name: 'Tolaki Mekongga',
     region: 'Konawe, Kolaka — Sulawesi Tenggara',
     icon: '🏔️',
     color: 'from-amber-500 to-orange-600',

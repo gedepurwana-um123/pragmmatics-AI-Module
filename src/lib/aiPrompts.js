@@ -37,7 +37,7 @@ export const SCAFFOLDING_PROMPTS = {
 };
 
 export const CULTURAL_WISDOM_PROMPTS = {
-  tolaki: `KEARIFAN BUDAYA TOLAKI/MEKONGGA:
+  tolaki: `KEARIFAN BUDAYA TOLAKI MEKONGGA:
 - Prinsip: Penghormatan (mombesara), harmoni sosial, menjaga martabat (sara)
 - Komunikasi santun: menghargai lawan bicara, komunikasi kolektif
 - Larangan: mengkritik secara langsung yang mempermalukan di depan umum
